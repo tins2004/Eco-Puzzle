@@ -142,8 +142,11 @@ public abstract class GridTileBase : MonoBehaviour
             case TileType.T07_Rock_Mountain:
                 missionManager.uiManager.AddScore((int)TileScore.T07_Rock_Mountain);
                 break;
-            case TileType.T08_Yellow_Grassland:
-                missionManager.uiManager.AddScore((int)TileScore.T08_Yellow_Grassland);
+            case TileType.T08_Yellow_Grass:
+                missionManager.uiManager.AddScore((int)TileScore.T08_Yellow_Grass);
+                break;
+            case TileType.T09_Xavan:
+                missionManager.uiManager.AddScore((int)TileScore.T09_Xavan);
                 break;
             default:
                 Debug.LogWarning($"Không có điểm cho loại tile: {newType}");

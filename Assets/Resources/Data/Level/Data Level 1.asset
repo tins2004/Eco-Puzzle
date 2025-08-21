@@ -92,32 +92,8 @@ MonoBehaviour:
     type: 0
   - active: 0
     type: 0
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
   - active: 0
     type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
   - active: 0
     type: 0
   - active: 0
@@ -158,8 +134,32 @@ MonoBehaviour:
     type: 0
   - active: 0
     type: 0
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
   - active: 0
     type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
   - active: 0
     type: 0
   - active: 0

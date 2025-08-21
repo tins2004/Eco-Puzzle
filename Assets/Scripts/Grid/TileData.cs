@@ -18,7 +18,8 @@ public enum TileType
     T05_Forest,
     T06_Flower_Field,
     T07_Rock_Mountain,
-    T08_Yellow_Grassland
+    T08_Yellow_Grass,
+    T09_Xavan,
 }
 
 public enum TileScore
@@ -31,5 +32,6 @@ public enum TileScore
     T05_Forest = 30,
     T06_Flower_Field = 10,
     T07_Rock_Mountain = 0,
-    T08_Yellow_Grassland = 10
+    T08_Yellow_Grass = 10,
+    T09_Xavan = 20
 }
