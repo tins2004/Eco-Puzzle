@@ -1,5 +1,6 @@
 // GridMapManager: Tạo và quản lý lưới tile trong Scene dựa trên dữ liệu từ GridMapData.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -49,8 +50,10 @@ public class GridMapManager : MonoBehaviour
                 return tilePrefabs[5];
             case TileType.T07_Rock_Mountain:
                 return tilePrefabs[6];
-            case TileType.T08_Yellow_Grassland:
+            case TileType.T08_Yellow_Grass:
                 return tilePrefabs[7];
+            case TileType.T09_Xavan:
+                return tilePrefabs[8];
             default:
                 return null;
         }
@@ -147,22 +150,53 @@ public class GridMapManager : MonoBehaviour
                 return GetTilePrefab(TileType.T02_Water_Lake);
             case TileType.T03_Green_Grass:
                 return GetTilePrefab(TileType.T03_Green_Grass);
-            // case TileType.T03_Green_Grass:
-            //     return Random.value > 0.5f ? grassPrefab : forestPrefab;
+            case TileType.T04_Green_Tree:
+                return GetTilePrefab(TileType.T04_Green_Tree);
+            case TileType.T05_Forest:
+                return GetTilePrefab(TileType.T05_Forest);
+            case TileType.T06_Flower_Field:
+                return GetTilePrefab(TileType.T06_Flower_Field);
+            case TileType.T07_Rock_Mountain:
+                return GetTilePrefab(TileType.T07_Rock_Mountain);
+            case TileType.T08_Yellow_Grass:
+                return GetTilePrefab(TileType.T08_Yellow_Grass);
+            case TileType.T09_Xavan:
+                return GetTilePrefab(TileType.T09_Xavan);
             default:
                 return null;
         }
     }
 
+    // ========== Grid Rules =========
     /// <summary>
     /// Cập nhật trạng thái toàn bộ bản đồ dựa trên quy tắc.
     /// </summary>
     public void UpdateMapState(TileType newType, GridTileBase newTile)
     {
-        // Debug.Log($"Cập nhật trạng thái bản đồ với loại mới: {newType}");
-        // Debug.Log("Cập nhật trạng thái toàn bộ bản đồ...");
+        var allTiles = GetAllTiles();
 
-        // Lấy danh sách tất cả tile hiện tại
+        foreach (var tile in allTiles)
+        {
+            if (tile is WaterLakeTile)
+            {
+                HandleWaterLake(tile, newType, newTile);
+            }
+            else if (tile is GreenTreeTile)
+            {
+                HandleGreenTree(tile, newType, newTile);
+            }
+            else if (tile is YellowGrassTile)
+            {
+                HandleYellowGrass(tile, newType, newTile);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Lấy toàn bộ tile trong bản đồ.
+    /// </summary>
+    private List<GridTileBase> GetAllTiles()
+    {
         var allTiles = new List<GridTileBase>();
         foreach (Transform child in transform)
         {
@@ -170,109 +204,169 @@ public class GridMapManager : MonoBehaviour
             if (tile != null)
                 allTiles.Add(tile);
         }
+        return allTiles;
+    }
 
-        // Duyệt toàn bộ tile và áp dụng quy tắc
-        foreach (var tile in allTiles)
-        {
-            // Debug.Log($"Danh sách tile: {tile.GetTileType()} tại {tile.Coordinates}");
-            if (tile is WaterLakeTile)
+    /// <summary>
+    /// Xử lý quy tắc khi tạo hồ nước.
+    /// </summary>
+    private void HandleWaterLake(GridTileBase tile, TileType newType, GridTileBase newTile)
+    {
+        if (newType != TileType.T02_Water_Lake || newTile != tile) return;
+
+        foreach (var neighbor in tile.GetNeighbors())
+        {  
+            // Nếu gần hồ nước là đất
+            if (neighbor is BarrenLandTile barren)
             {
-                if (newType != TileType.T02_Water_Lake) continue; // Chỉ xử lý nếu cái mới là hồ nước
-                if (newTile != tile) continue; // Chỉ xử lý hồ mới được tạo
+                int rockCount = 0;
+                int lakeCount = 0;
 
-                // Debug.Log($"Xử lý tile nước: {tile.GetTileType()} tại {tile.Coordinates}");
-                // Quy tắc: Hồ làm đất khô xung quanh thành cỏ
-                foreach (var neighbor in tile.GetNeighbors())
+                foreach (var subNeighbor in barren.GetNeighbors())
                 {
-                    // Debug.Log($"Xử lý tile lân cận: {neighbor.GetTileType()} tại {neighbor.Coordinates}");
-                    if (neighbor is BarrenLandTile barren)
-                    {
-                        // barren.ReplaceTile(TileType.T03_Green_Grass, tilePrefabs[2]);
-                        StartCoroutine(ReplaceTile(barren, TileType.T03_Green_Grass, GetTilePrefab(TileType.T03_Green_Grass)));
-                    }
+                    if (subNeighbor is RockMountainTile)
+                        rockCount++;
+                    else if (subNeighbor is WaterLakeTile && subNeighbor != newTile)
+                        lakeCount++;
+                }
+
+                if (rockCount > 0)
+                {
+                    // Đất cạnh ít nhất 1 đá -> Cỏ vàng
+                    StartCoroutine(ReplaceTile(
+                        barren,
+                        TileType.T08_Yellow_Grass,
+                        GetTilePrefab(TileType.T08_Yellow_Grass)
+                    ));
+                }
+                else if (lakeCount > 0)
+                {
+                    // Đất cạnh ít nhất 2 hồ nước(kể cả tile mới) -> Hoa
+                    StartCoroutine(ReplaceTile(
+                        barren,
+                        TileType.T06_Flower_Field,
+                        GetTilePrefab(TileType.T06_Flower_Field)
+                    ));
+                }
+                else
+                {
+                    // Các trường hợp còn lại -> Cỏ thường
+                    StartCoroutine(ReplaceTile(
+                        barren,
+                        TileType.T03_Green_Grass,
+                        GetTilePrefab(TileType.T03_Green_Grass)
+                    ));
                 }
             }
-            // else if (tile is GreenGrassTile)
-            // {
-            //     // Quy tắc: Nếu không còn hồ bên cạnh → biến thành đất khô
-            //     bool hasLakeNearby = false;
-            //     foreach (var neighbor in tile.GetNeighbors())
-            //     {
-            //         if (neighbor is WaterLakeTile)
-            //         {
-            //             // Debug.Log($"{tile.GetTileType()} Có hồ bên cạnh: {neighbor.GetTileType()} tại {neighbor.Coordinates}");
-            //             hasLakeNearby = true;
-            //             break;
-            //         }
-            //     }
-            //     if (!hasLakeNearby)
-            //     {
-            //         // tile.ReplaceTile(TileType.T01_Barren_Land, tilePrefabs[0]);
-            //         StartCoroutine(ReplaceTile(tile, TileType.T01_Barren_Land, GetTilePrefab(TileType.T01_Barren_Land)));
-            //     }
-            // }
-            else if (tile is GreenTreeTile)
+
+
+            // Nếu gần hồ nước là cỏ thì thành hoa
+            if (neighbor is GreenGrassTile greenGrass)
             {
-                if (newType != TileType.T04_Green_Tree) continue; // Chỉ xử lý nếu cái mới là cây xanh
-                if (newTile != tile) continue; // Chỉ xử lý cây mới được tạo
-
-                var connectedTrees = GetConnectedGreenTrees(newTile);
-                // Debug.Log($"{newTile.GetTileType()} có {connectedTrees.Count} cây kết nối với cây mới tại {newTile.Coordinates}");
-                if (connectedTrees.Count >= 3)
+                foreach (var subNeighbor in greenGrass.GetNeighbors())
                 {
-                    // Debug.Log($"Cây mới loại {newType} tại {newTile.Coordinates} đã kết nối với {connectedTrees.Count} cây khác");
-                    // Ô cây mới thành Rừng
-                    StartCoroutine(ReplaceTile(newTile, TileType.T05_Forest, GetTilePrefab(TileType.T05_Forest)));
-
-                    if (connectedTrees.Count == 3)
+                    if (subNeighbor is WaterLakeTile lake && subNeighbor != newTile)
                     {
-                        // Các cây khác thành đất khô
-                        foreach (var tree in connectedTrees)
-                        {
-                            if (tree != newTile)
-                                StartCoroutine(ReplaceTile(tree, TileType.T01_Barren_Land, GetTilePrefab(TileType.T01_Barren_Land)));
-                        }
-                    }
-                    else if (connectedTrees.Count == 4)
-                    {
-                        // Các cây khác thành cỏ
-                        foreach (var tree in connectedTrees)
-                        {
-                            if (tree != newTile)
-                                StartCoroutine(ReplaceTile(tree, TileType.T03_Green_Grass, GetTilePrefab(TileType.T03_Green_Grass)));
-                        }
-                    }
-                    else if (connectedTrees.Count > 4)
-                    {
-                        // Tạo danh sách cây, nhưng loại bỏ cây mới ra trước
-                        var otherTrees = new List<GridTileBase>(connectedTrees);
-                        otherTrees.Remove(newTile);
-
-                        // Sắp xếp otherTrees theo khoảng cách đến cây mới (gần -> xa)
-                        otherTrees.Sort((a, b) =>
-                            Vector3Int.Distance(a.Coordinates, newTile.Coordinates)
-                            .CompareTo(Vector3Int.Distance(b.Coordinates, newTile.Coordinates)));
-
-                        // Cây mới -> rừng
-                        // StartCoroutine(ReplaceTile(newTile, TileType.T05_Forest, GetTilePrefab(TileType.T05_Forest)));
-
-                        // 2 cây gần nhất -> rừng
-                        for (int i = 0; i < Mathf.Min(2, otherTrees.Count); i++)
-                        {
-                            StartCoroutine(ReplaceTile(otherTrees[i], TileType.T05_Forest, GetTilePrefab(TileType.T05_Forest)));
-                        }
-
-                        // Các cây còn lại -> cỏ
-                        for (int i = 2; i < otherTrees.Count; i++)
-                        {
-                            StartCoroutine(ReplaceTile(otherTrees[i], TileType.T03_Green_Grass, GetTilePrefab(TileType.T03_Green_Grass)));
-                        }
+                        StartCoroutine(ReplaceTile(
+                            greenGrass,
+                            TileType.T06_Flower_Field,
+                            GetTilePrefab(TileType.T06_Flower_Field)
+                        ));
+                        break;
                     }
                 }
             }
         }
     }
 
+
+    /// <summary>
+    /// Xử lý quy tắc khi tạo cây xanh.
+    /// </summary>
+    private void HandleGreenTree(GridTileBase tile, TileType newType, GridTileBase newTile)
+    {
+        if (newType != TileType.T04_Green_Tree || newTile != tile) return;
+
+        var connectedTrees = GetConnectedTiles(newTile, t => t is GreenTreeTile);
+
+        if (connectedTrees.Count < 3) return;
+
+        // Cây mới thành rừng
+        StartCoroutine(ReplaceTile(newTile, TileType.T05_Forest, GetTilePrefab(TileType.T05_Forest)));
+
+        if (connectedTrees.Count == 3)
+        {
+            ReplaceOtherTrees(connectedTrees, newTile, TileType.T01_Barren_Land);
+        }
+        else if (connectedTrees.Count == 4)
+        {
+            ReplaceOtherTrees(connectedTrees, newTile, TileType.T03_Green_Grass);
+        }
+        else if (connectedTrees.Count > 4)
+        {
+            HandleLargeTreeCluster(newTile, connectedTrees);
+        }
+    }
+
+    /// <summary>
+    /// Thay thế toàn bộ cây kết nối trừ cây mới.
+    /// </summary>
+    private void ReplaceOtherTrees(List<GridTileBase> connectedTrees, GridTileBase newTile, TileType type)
+    {
+        foreach (var tree in connectedTrees)
+        {
+            if (tree != newTile)
+                StartCoroutine(ReplaceTile(tree, type, GetTilePrefab(type)));
+        }
+    }
+
+    /// <summary>
+    /// Xử lý khi số lượng cây kết nối > 4.
+    /// </summary>
+    private void HandleLargeTreeCluster(GridTileBase newTile, List<GridTileBase> connectedTrees)
+    {
+        var otherTrees = new List<GridTileBase>(connectedTrees);
+        otherTrees.Remove(newTile);
+
+        otherTrees.Sort((a, b) =>
+            Vector3Int.Distance(a.Coordinates, newTile.Coordinates)
+            .CompareTo(Vector3Int.Distance(b.Coordinates, newTile.Coordinates)));
+
+        // 2 cây gần nhất -> rừng
+        for (int i = 0; i < Mathf.Min(2, otherTrees.Count); i++)
+        {
+            StartCoroutine(ReplaceTile(otherTrees[i], TileType.T05_Forest, GetTilePrefab(TileType.T05_Forest)));
+        }
+
+        // Các cây còn lại -> cỏ
+        for (int i = 2; i < otherTrees.Count; i++)
+        {
+            StartCoroutine(ReplaceTile(otherTrees[i], TileType.T03_Green_Grass, GetTilePrefab(TileType.T03_Green_Grass)));
+        }
+    }
+
+    /// <summary>
+    /// Xử lý quy tắc khi tạo cỏ vàng.
+    /// </summary>
+    private void HandleYellowGrass(GridTileBase tile, TileType newType, GridTileBase newTile)
+    {
+        if (newType != TileType.T08_Yellow_Grass || newTile != tile) return;
+
+        var connectedYellowGrass = GetConnectedTiles(newTile, t => t is YellowGrassTile);
+
+        if (connectedYellowGrass.Count >= 3)
+        {
+            // Chỉ ô cỏ vàng mới thành Xavan
+            StartCoroutine(ReplaceTile(newTile, TileType.T09_Xavan, GetTilePrefab(TileType.T09_Xavan)));
+        }
+    }
+
+    /// <summary>
+    /// Thay thế tile hiện tại bằng loại mới và prefab tương ứng - Có hiệu ứng
+    /// </summary>
+    /// <param name="tile">tile hiện tại</param>
+    /// <param name="newType">loại tile mới</param>
+    /// <param name="prefab">prefab của tile mới</param>
     public IEnumerator ReplaceTile(GridTileBase tile, TileType newType, GameObject prefab)
     {
         tile.LiftTile();
@@ -283,11 +377,12 @@ public class GridMapManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Trả về danh sách các cây xanh liên kết với tile bắt đầu. Bằng thuật BFS.
+    /// Trả về danh sách các tile liên kết với tile bắt đầu theo điều kiện cho trước. (BFS)
     /// </summary>
     /// <param name="startTile">Tile bắt đầu</param>
-    /// <returns>Danh sách các cây xanh liên kết</returns>
-    public List<GridTileBase> GetConnectedGreenTrees(GridTileBase startTile)
+    /// <param name="match">Điều kiện kiểm tra tile (ví dụ: tile => tile is GreenTreeTile)</param>
+    /// <returns>Danh sách các tile liên kết</returns>
+    public List<GridTileBase> GetConnectedTiles(GridTileBase startTile, Func<GridTileBase, bool> match)
     {
         var visited = new HashSet<GridTileBase>();
         var queue = new Queue<GridTileBase>();
@@ -303,7 +398,7 @@ public class GridMapManager : MonoBehaviour
 
             foreach (var neighbor in current.GetNeighbors())
             {
-                if (!visited.Contains(neighbor) && neighbor is GreenTreeTile)
+                if (!visited.Contains(neighbor) && match(neighbor))
                 {
                     visited.Add(neighbor);
                     queue.Enqueue(neighbor);
@@ -313,5 +408,4 @@ public class GridMapManager : MonoBehaviour
 
         return result;
     }
-
 }

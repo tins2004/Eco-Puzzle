@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class GreenGrassTile : GridTileBase
+public class XavanTile : GridTileBase
 {
-    public override string GetTileType() => "Cỏ xanh";
+    public override string GetTileType() => "Xavan";
+
 
     public override void HandleLongPress()
     {
@@ -10,4 +11,3 @@ public class GreenGrassTile : GridTileBase
         ReplaceTile(TileType.T04_Green_Tree, gridManager.GetTilePrefab(TileType.T04_Green_Tree));
     }
 }
-
