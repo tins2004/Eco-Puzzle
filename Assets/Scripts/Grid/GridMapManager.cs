@@ -3,13 +3,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 [RequireComponent(typeof(Grid))]
 public class GridMapManager : MonoBehaviour
 {
-    [Header("Grid Data")] 
+    [Header("Grid Data")]
     private LevelData mapData;
+    private LevelManager levelManager;
 
     [Header("Tile Prefabs")]
     [SerializeField] private GameObject[] tilePrefabs;
@@ -17,13 +20,22 @@ public class GridMapManager : MonoBehaviour
     private Grid grid;
     public Dictionary<Vector3Int, TileType> tempTileStates = new Dictionary<Vector3Int, TileType>();
 
-    public void SetLevelData(LevelData data)
+    // Animal
+    private List<GridTileBase> highlightedTiles = new List<GridTileBase>();
+    private List<GridTileBase> shadowedTiles = new List<GridTileBase>();
+
+    // Region
+    private List<Region> currentRegions = new List<Region>();
+    private int nextRegionId = 1; // Tự tăng Id cho vùng mới
+
+    public void SetLevelData(LevelData data, LevelManager levelManager)
     {
         mapData = data;
+        this.levelManager = levelManager;
     }
 
     public void StartGrid()
-    {   
+    {
         Debug.Log("Khởi tạo Grid Map với dữ liệu bản đồ: " + mapData.name);
 
         grid = GetComponent<Grid>();
@@ -103,7 +115,13 @@ public class GridMapManager : MonoBehaviour
         tempTileStates.Clear(); // reset data ảo
 
         foreach (Transform child in transform)
-            Destroy(child.gameObject);
+        {
+            if (child.name != "Marker Container")
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
 
         if (mapData == null || mapData.tiles == null)
         {
@@ -190,6 +208,10 @@ public class GridMapManager : MonoBehaviour
                 HandleYellowGrass(tile, newType, newTile);
             }
         }
+
+        // Chỉ cập nhật khi có nhiệm vụ động vật đang hoạt động
+        if (levelManager.missionManager.GetCurrentMission().Item2.Count > 0)
+            UpdateCurrentRegionTiles(allTiles);
     }
 
     /// <summary>
@@ -215,7 +237,7 @@ public class GridMapManager : MonoBehaviour
         if (newType != TileType.T02_Water_Lake || newTile != tile) return;
 
         foreach (var neighbor in tile.GetNeighbors())
-        {  
+        {
             // Nếu gần hồ nước là đất
             if (neighbor is BarrenLandTile barren)
             {
@@ -369,12 +391,25 @@ public class GridMapManager : MonoBehaviour
     /// <param name="prefab">prefab của tile mới</param>
     public IEnumerator ReplaceTile(GridTileBase tile, TileType newType, GameObject prefab)
     {
+        // // Kiểm tra xem tile này có thuộc vùng có động vật không
+        // foreach (var region in currentRegions)
+        // {
+        //     if (region.ContainsTile(tile) &&
+        //         levelManager.animalManager.currentAnimal.ContainsKey(region.Id))
+        //     {
+        //         Debug.Log($"Tile {tile.Coordinates} thuộc Region {region.Id} có động vật -> không thay đổi");
+        //         yield break;
+        //     }
+        // }
+
         tile.LiftTile();
-        // Đợi một chút để hiệu ứng nhấc tile có thời gian hiển thị   
         yield return new WaitForSeconds(0.2f);
         tile.ResetTilePosition();
         tile.ReplaceTile(newType, prefab);
     }
+
+
+    // ========== Xử lý vùng và động vật =========
 
     /// <summary>
     /// Trả về danh sách các tile liên kết với tile bắt đầu theo điều kiện cho trước. (BFS)
@@ -407,5 +442,136 @@ public class GridMapManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Cập nhật và lưu toàn bộ các vùng trên bản đồ.
+    /// </summary>
+    public void UpdateCurrentRegionTiles(List<GridTileBase> allTiles)
+    {
+        // Debug.LogWarning("Cập nhật vùng hiện tại...");
+        var newRegions = new List<Region>();
+        HashSet<GridTileBase> visited = new HashSet<GridTileBase>();
+
+        foreach (var tile in allTiles)
+        {
+            if (visited.Contains(tile)) continue;
+
+            var connectedTiles = GetConnectedTiles(tile, t => t.GetTileType() == tile.GetTileType());
+            foreach (var t in connectedTiles)
+                visited.Add(t);
+
+            // Tìm xem có region cũ nào overlap không
+            Region oldRegion = currentRegions.FirstOrDefault(r => r.Tiles.Intersect(connectedTiles).Any());
+
+            if (oldRegion != null)
+            {
+                // Giữ lại Id cũ
+                Region newRegion = new Region(oldRegion.Id, tile.GetTileType());
+                foreach (var t in connectedTiles)
+                    newRegion.AddTile(t);
+                newRegions.Add(newRegion);
+            }
+            else
+            {
+                // Tạo region mới
+                Region newRegion = new Region(nextRegionId++, tile.GetTileType());
+                foreach (var t in connectedTiles)
+                    newRegion.AddTile(t);
+                newRegions.Add(newRegion);
+            }
+        }
+
+        currentRegions = newRegions;
+    }
+
+
+    /// <summary>
+    /// Lấy tất cả các vùng theo loại tile.
+    /// </summary>
+    public List<Region> GetRegionsByTileType(TileType type)
+    {
+        List<Region> result = new List<Region>();
+
+        foreach (var region in currentRegions)
+        {
+            if (region.Type == type)
+            {
+                result.Add(region);
+            }
+        }
+
+        return result;
+    }
+
+    public bool GetRegionById(int regionId, out Region region)
+    {
+        region = currentRegions.FirstOrDefault(r => r.Id == regionId);
+        return region != null;
+    }
+
+    /// <summary>
+    /// Làm nổi bật vùng (region) cho động vật dựa trên loại tile.
+    /// </summary>
+    /// <param name="animalType">loại động vật</param>
+    public void HighlightRegion(AnimalType animalType, List<Vector3Int> inappropriateRegions)
+    {
+        ClearHighlight();
+
+        // Lấy vùng hợp lệ dựa trên AnimalRegion
+        TileType allowed = TileType.T00_Null;
+
+        if (Enum.TryParse(animalType.ToString(), out AnimalRegion tile))
+            allowed = (TileType)tile;
+
+        // Debug.Log($"Làm nổi bật vùng cho động vật: {animalType} với loại tile: {allowed}");
+
+        // Debug.Log($"Danh sách các tile không phù hợp");
+
+        foreach (var tileCoordinate in tempTileStates.Keys)
+        {
+            GridTileBase t = GetTileAt(tileCoordinate);
+            if (t != null && (t.GetTileType() == allowed) && !inappropriateRegions.Contains(tileCoordinate))
+            {
+                t.LiftTile();
+                highlightedTiles.Add(t);
+            }
+            else
+            {
+                var sr = t.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.color = new Color(0.3f, 1, 1); // làm mờ
+                    shadowedTiles.Add(t);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Xóa bỏ hiệu ứng làm nổi bật vùng (region) cho động vật.
+    /// </summary>
+    public void ClearHighlight()
+    {
+        foreach (var t in highlightedTiles)
+        {
+            if (t != null)
+            {
+                t.ResetTilePosition();
+            }
+        }
+
+        foreach (var t in shadowedTiles)
+        {
+            if (t != null)
+            {
+                var sr = t.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                    sr.color = Color.white; // reset về màu cũ
+            }
+        }
+        
+        highlightedTiles.Clear();
+        shadowedTiles.Clear();
     }
 }

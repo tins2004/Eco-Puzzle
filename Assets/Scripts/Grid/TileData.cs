@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -6,7 +7,7 @@ public class TileData
 {
     public bool active = false;
     public TileType type = TileType.T00_Null;
-}
+}   
 
 public enum TileType
 {

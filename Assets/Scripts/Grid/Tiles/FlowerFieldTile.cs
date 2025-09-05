@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FlowerFieldTile : GridTileBase
 {
-    public override string GetTileType() => "Flower Field";
+    public override TileType GetTileType() => TileType.T06_Flower_Field;
 
 
     public override void HandleLongPress()

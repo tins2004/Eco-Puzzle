@@ -8,9 +8,10 @@ public class LevelManager : MonoBehaviour
     private LevelData levelData;
 
     [Header("Manager Link")]
-    [SerializeField] private GridMapManager gridMapManager;
-    [SerializeField] private MissionManager missionManager;
-    [SerializeField] private UIManager uiManager;
+    [SerializeField] public GridMapManager gridMapManager;
+    [SerializeField] public MissionManager missionManager;
+    [SerializeField] public UIManager uiManager;
+    [SerializeField] public AnimalManager animalManager;
 
     private void Awake()
     {
@@ -45,18 +46,25 @@ public class LevelManager : MonoBehaviour
             uiManager.SetScoreData(levelData);
         }
 
-        // Grid Map Manager
-        if (gridMapManager != null)
-        {
-            gridMapManager.SetLevelData(levelData);
-            gridMapManager.StartGrid();
-        }
-
         // Mission Manager
         if (missionManager != null)
         {
             missionManager.SetLevelData(levelData, uiManager);
             missionManager.StartMission();
+        }
+
+        // Grid Map Manager
+        if (gridMapManager != null)
+        {
+            gridMapManager.SetLevelData(levelData, this);
+            gridMapManager.StartGrid();
+        }
+
+        // Animal Manager
+        if (animalManager != null)
+        {
+            animalManager.SetLevelData(levelData, this);
+            animalManager.StartAnimal();
         }
     }
 

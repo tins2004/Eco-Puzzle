@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class YellowGrassTile : GridTileBase
 {
-    public override string GetTileType() => "Yellow Grass";
+    public override TileType GetTileType() => TileType.T08_Yellow_Grass;
 
 
     public override void HandleLongPress()

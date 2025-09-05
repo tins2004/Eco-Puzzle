@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GreenGrassTile : GridTileBase
 {
-    public override string GetTileType() => "Cỏ xanh";
+    public override TileType GetTileType() => TileType.T03_Green_Grass;
 
     public override void HandleLongPress()
     {

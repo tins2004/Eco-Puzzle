@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WaterLakeTile : GridTileBase
 {
-    public override string GetTileType() => "Water Lake";
+    public override TileType GetTileType() => TileType.T02_Water_Lake;
 
 
     public override void HandleLongPress()

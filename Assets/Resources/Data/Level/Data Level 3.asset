@@ -261,7 +261,13 @@ MonoBehaviour:
   tileMissions:
   - tileType: 5
     requiredCount: 4
-  animalMissions: []
+  animalMissions:
+  - animalType: 1
+    requiredCount: 3
+  - animalType: 6
+    requiredCount: 2
+  - animalType: 4
+    requiredCount: 2
   limitType: 2
   limitValue: 30
   maxScore: 960

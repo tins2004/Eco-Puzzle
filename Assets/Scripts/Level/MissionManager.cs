@@ -61,6 +61,11 @@ public class MissionManager : MonoBehaviour
         uiManager.UpdateUI(tileMissionCounts, animalMissionCounts, limitValue);
     }
 
+    public (Dictionary<TileType, int>, Dictionary<AnimalType, int>) GetCurrentMission()
+    {
+        return (tileMissionCounts, animalMissionCounts);
+    }
+
     public void ReduceMoveStep()
     {
         if (levelData.limitType != LimitType.MoveLimit)
@@ -100,6 +105,30 @@ public class MissionManager : MonoBehaviour
             // }
 
             uiManager.AddScore(50);
+            uiManager.UpdateMissionUI(tileMissionCounts, animalMissionCounts);
+        }
+    }
+
+    public void CollectAnimal(AnimalType animalType)
+    {
+        // Kiểm tra animalType có trong nhiệm vụ không
+        if (animalMissionCounts.ContainsKey(animalType))
+        {
+            // Giảm đi 1
+            animalMissionCounts[animalType]--;
+
+            // Không cho xuống dưới 0
+            if (animalMissionCounts[animalType] < 0)
+                animalMissionCounts[animalType] = 0;
+
+            // Debug.Log($"Thu thập {animalType}, còn lại: {animalMissionCounts[animalType]}");
+
+            // Kiểm tra hoàn thành nhiệm vụ animalType
+            // if (animalMissionCounts[animalType] == 0)
+            // {
+            //     Debug.Log($"Hoàn thành nhiệm vụ: {animalType}");
+            // }
+
             uiManager.UpdateMissionUI(tileMissionCounts, animalMissionCounts);
         }
     }

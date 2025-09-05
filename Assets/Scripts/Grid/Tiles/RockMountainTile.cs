@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class RockMountainTile : GridTileBase
 {
-    public override string GetTileType() => "Rock Mountain";
+    public override TileType GetTileType() => TileType.T07_Rock_Mountain;
 
 
     public override void HandleLongPress()

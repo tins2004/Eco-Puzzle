@@ -9,22 +9,6 @@ public class TileMission
     public int requiredCount;
 }
 
-[Serializable]
-public class AnimalMission
-{
-    public AnimalType animalType;
-    public int requiredCount;
-}
-
-public enum AnimalType
-{
-    None,
-    Cow,
-    Sheep,
-    Horse,
-    Dog,
-    Cat
-}
 
 public enum LimitType
 {

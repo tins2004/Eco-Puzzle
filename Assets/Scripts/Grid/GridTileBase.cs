@@ -3,6 +3,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System;
+using UnityEngine.Tilemaps;
+using System.Linq;
 
 public abstract class GridTileBase : MonoBehaviour
 {
@@ -10,8 +13,9 @@ public abstract class GridTileBase : MonoBehaviour
     public Vector3Int Coordinates { get; private set; } // Tọa độ của tile trong Grid
     protected GridMapManager gridManager;
 
-    // ----- Mission -----
+    // ----- Mission and Animal -----
     protected MissionManager missionManager;
+    protected AnimalManager animalManager;
 
     // ----- Layer -----
     protected SpriteRenderer spriteRenderer;
@@ -29,6 +33,7 @@ public abstract class GridTileBase : MonoBehaviour
     public virtual void Init(Vector3Int coordinates)
     {
         Coordinates = coordinates;
+        gameObject.name = $"{GetTileType()}_{Coordinates}";
 
         if (spriteRenderer == null)
             spriteRenderer = transform.Find("Sprite")?.GetComponent<SpriteRenderer>();
@@ -48,12 +53,17 @@ public abstract class GridTileBase : MonoBehaviour
         {
             missionManager = FindObjectOfType<MissionManager>();
         }
+
+        if (animalManager == null)
+        {
+            animalManager = FindObjectOfType<AnimalManager>();
+        }
     }
 
     /// <summary>
     /// Trả về tên loại tile (cần được override ở lớp con).
     /// </summary>
-    public abstract string GetTileType();
+    public abstract TileType GetTileType();
 
     /// <summary>
     /// Xử lý sự kiện nhấn giữ trên tile (cần được override ở lớp con).
@@ -65,6 +75,7 @@ public abstract class GridTileBase : MonoBehaviour
     /// </summary>
     public void LiftTile()
     {
+        animalManager.ShowMarkerIcon(false);
         transform.position = originalPosition + Vector3.up * liftAmount;
         spriteRenderer.sortingOrder = originalLayer + 1;
     }
@@ -74,6 +85,7 @@ public abstract class GridTileBase : MonoBehaviour
     /// </summary>
     public void ResetTilePosition()
     {
+        animalManager.ShowMarkerIcon(true);
         transform.position = originalPosition;
         spriteRenderer.sortingOrder = originalLayer;
     }
@@ -86,6 +98,12 @@ public abstract class GridTileBase : MonoBehaviour
     public void ReplaceTile(TileType newType, GameObject prefab, bool updateMap = true)
     {
         if (gridManager == null) return;
+
+        if (HasAnimalInRegion())
+        {
+            // Debug.Log($"Tile {Coordinates} thuộc vùng có động vật -> không thay đổi");
+            return;
+        }
 
         // Cập nhật vào data ảo
         gridManager.SetTempTile(Coordinates, newType);
@@ -100,7 +118,11 @@ public abstract class GridTileBase : MonoBehaviour
         Destroy(gameObject);
 
         // Thêm điểm
-        AddScoreByNewTile(newType);
+        if (Enum.TryParse(newType.ToString(), out TileScore score))
+        {
+            missionManager.uiManager.AddScore((int)score);
+            // Debug.Log($"Thêm điểm: {(int)score} cho loại tile {newType}");
+        }
 
         // Đánh nhiệm vụ
         if (missionManager != null)
@@ -115,43 +137,6 @@ public abstract class GridTileBase : MonoBehaviour
     {
         yield return null; // chờ 1 frame
         gridManager.UpdateMapState(newType, newTile);
-    }
-
-    private void AddScoreByNewTile(TileType newType)
-    {
-        switch (newType)
-        {
-            case TileType.T01_Barren_Land:
-                missionManager.uiManager.AddScore((int)TileScore.T01_Barren_Land);
-                break;
-            case TileType.T02_Water_Lake:
-                missionManager.uiManager.AddScore((int)TileScore.T02_Water_Lake);
-                break;
-            case TileType.T03_Green_Grass:
-                missionManager.uiManager.AddScore((int)TileScore.T03_Green_Grass);
-                break;
-            case TileType.T04_Green_Tree:
-                missionManager.uiManager.AddScore((int)TileScore.T04_Green_Tree);
-                break;
-            case TileType.T05_Forest:
-                missionManager.uiManager.AddScore((int)TileScore.T05_Forest);
-                break;
-            case TileType.T06_Flower_Field:
-                missionManager.uiManager.AddScore((int)TileScore.T06_Flower_Field);
-                break;
-            case TileType.T07_Rock_Mountain:
-                missionManager.uiManager.AddScore((int)TileScore.T07_Rock_Mountain);
-                break;
-            case TileType.T08_Yellow_Grass:
-                missionManager.uiManager.AddScore((int)TileScore.T08_Yellow_Grass);
-                break;
-            case TileType.T09_Xavan:
-                missionManager.uiManager.AddScore((int)TileScore.T09_Xavan);
-                break;
-            default:
-                Debug.LogWarning($"Không có điểm cho loại tile: {newType}");
-                break;
-        }
     }
 
     /// <summary>
@@ -205,5 +190,116 @@ public abstract class GridTileBase : MonoBehaviour
         }
 
         return neighbors.ToArray();
+    }
+
+    /// <summary>
+    /// Kiểm tra nhanh xem tile này có nằm trong region nào đang chứa animal không.
+    /// </summary>
+    private bool IsInRegionWithAnimal(out Region foundRegion)
+    {
+        foundRegion = null;
+
+        if (animalManager == null || gridManager == null) return false;
+
+        var regions = gridManager.GetRegionsByTileType(GetTileType());
+
+        foreach (var region in regions)
+        {
+            if (!region.Tiles.Contains(this)) continue;
+
+            if (animalManager.currentAnimal.TryGetValue(region.Id, out var animals) && animals.Count > 0)
+            {
+                foundRegion = region;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /// <summary>
+    /// Kiểm tra tile này có thuộc một region chứa động vật, 
+    /// và nếu region đó đã FULL thì không cho thay đổi.
+    /// </summary>
+   public bool HasAnimalInRegion()
+    {
+        if (!IsInRegionWithAnimal(out var region))
+            return false; // tile này chưa có animal trong region → đổi thoải mái
+
+        // Nếu tile không phải là tile ở rìa thì không cho thay đổi
+        if (!IsEdgeTile(this, region))
+        {
+            Debug.LogWarning($"Tile {Coordinates} không phải tile rìa của region {region.Id}.");
+            return true;
+        }
+
+        // Nếu region có animal thì tính dung lượng
+        if (animalManager.currentAnimal.TryGetValue(region.Id, out var animals) && animals.Count > 0)
+        {
+            int totalAnimalSize = 0;
+            foreach (var a in animals)
+            {
+                if (Enum.TryParse(a.ToString(), out AnimalSize sizeAnimal))
+                {
+                    totalAnimalSize += (int)sizeAnimal;
+                }
+            }
+
+            // Nếu dung lượng animal >= số tile → FULL → KHÔNG cho thay đổi
+            if (totalAnimalSize >= region.Tiles.Count)
+            {
+                Debug.LogWarning($"Region {region.Id} đã FULL với {totalAnimalSize} con trên {region.Tiles.Count} ô.");
+                return true;
+            }
+        }
+
+        // Di chuyển marker trong region nếu tile cũ bị thay.
+        animalManager.RelocateMarker(region, this);
+
+        return false;
+    }
+
+    /// <summary>
+    /// Kiểm tra xem tile có phải là tile ở rìa của region không.
+    /// Với hex: nếu neighbors cùng region không liền kề (rời rạc) thì tile coi như trong lòng.
+    /// </summary>
+    private bool IsEdgeTile(GridTileBase tile, Region region)
+    {
+        var neighbors = tile.GetNeighbors(); // 6 neighbors (theo Even-Q / Odd-Q)
+
+        // Đánh dấu 6 hướng theo vòng tròn
+        bool[] mask = new bool[6];
+        for (int i = 0; i < neighbors.Length; i++)
+        {
+            var neighbor = neighbors[i];
+            mask[i] = (neighbor != null && region.Tiles.Contains(neighbor));
+        }
+
+        int countInRegion = mask.Count(m => m);
+
+        // Nếu ít hơn 2 neighbor cùng region → chắc chắn là rìa
+        if (countInRegion < 2)
+            return true;
+
+        // Nếu đủ 4 neighbor cùng region → chắc chắn nằm trong lòng
+        if (countInRegion > 4)
+            return false;
+
+        // Kiểm tra xem các neighbor true có liền kề thành một dải hay bị chia tách
+        int segments = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            int next = (i + 1) % 6;
+            if (mask[i] && !mask[next])
+                segments++;
+        }
+
+        // Nếu nhiều hơn 1 đoạn neighbor rời rạc → coi như trong lòng (NOT edge)
+        if (segments > 1)
+            return false;
+
+        // Còn lại là rìa
+        return true;
     }
 }

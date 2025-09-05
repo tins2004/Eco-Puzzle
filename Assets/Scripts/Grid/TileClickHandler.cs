@@ -5,6 +5,7 @@ using UnityEngine;
 public class TileClickHandler : MonoBehaviour
 {
     [HideInInspector] public GridTileBase tile;
+    private LevelManager levelManager;
 
     [Header("Điều khiển - Nhấn giữ")]
     [SerializeField] private float holdTime = 0.3f; // Thời gian giữ (giây) để tính là "nhấn giữ"
@@ -20,11 +21,17 @@ public class TileClickHandler : MonoBehaviour
             tile = GetComponent<GridTileBase>();
         }
 
+        if (levelManager == null)
+            levelManager = FindObjectOfType<LevelManager>();
+
         tile.originalPosition = transform.position; // Lưu vị trí ban đầu của tile
     }
 
     private void Update()
     {
+        // Nếu đang ở trạng thái chọn động vật thì không thể thay đổi grid
+        if (levelManager.animalManager.selectedAnimal != AnimalType.A00_Null) return;
+
         // --- Cảm ứng ---
         if (Input.touchCount > 0)
         {
@@ -47,8 +54,8 @@ public class TileClickHandler : MonoBehaviour
                 tile.ResetTilePosition();
                 if (Time.time - pressStartTime >= holdTime)
                     HandleLongPress();
-                else
-                    OnClick();
+                // else
+                //     OnClick();
 
                 isPressing = false;
             }
@@ -73,8 +80,8 @@ public class TileClickHandler : MonoBehaviour
                 tile.ResetTilePosition();
                 if (Time.time - pressStartTime >= holdTime)
                     HandleLongPress();
-                else
-                    OnClick();
+                // else
+                //     OnClick();
 
                 isPressing = false;
             }
@@ -88,13 +95,29 @@ public class TileClickHandler : MonoBehaviour
         return hit != null && hit.transform == transform;
     }
 
-    private void OnClick()
-    {
-        if (tile != null)
-        {
-            Debug.Log($"Nhấn thả tại {tile.Coordinates}: {tile.GetTileType()}");
-        }
-    }
+    // private void OnClick()
+    // {
+    //     if (tile != null && tile.gridManager != null)
+    //     {
+    //         // Nếu Animal đang chọn thì reset highlight
+    //         var animalMgr = levelManager.animalManager;
+    //         if (animalMgr != null && animalMgr.selectedAnimal != AnimalType.A00_Null)
+    //         {
+    //             animalMgr.ResetSelection();
+    //             return;
+    //         }
+
+    //         // Nếu không chọn animal thì chỉ log vùng như cũ
+    //         var region = tile.gridManager.GetRegionByTileType(tile.GetTileType());
+
+    //         // string log = $"[Region] Loại: {tile.GetTileType()} | Số lượng: {region.Count}\n";
+    //         // foreach (var r in region)
+    //         // {
+    //         //     log += $"- Vùng: {r}\n";
+    //         // }
+    //         Debug.Log(region);
+    //     }
+    // }
 
     private void HandleLongPress()
     {

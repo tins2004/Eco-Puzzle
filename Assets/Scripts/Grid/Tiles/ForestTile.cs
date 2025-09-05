@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ForestTile : GridTileBase
 {
-    public override string GetTileType() => "Rừng cây";
+    public override TileType GetTileType() => TileType.T05_Forest;
 
     public override void HandleLongPress()
     {

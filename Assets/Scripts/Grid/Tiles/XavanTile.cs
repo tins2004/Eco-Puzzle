@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class XavanTile : GridTileBase
 {
-    public override string GetTileType() => "Xavan";
+    public override TileType GetTileType() => TileType.T09_Xavan;
 
 
     public override void HandleLongPress()

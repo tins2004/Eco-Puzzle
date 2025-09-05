@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class GreenTreeTile : GridTileBase
 {
-    public override string GetTileType() => "Cây xanh";
+    public override TileType GetTileType() => TileType.T04_Green_Tree;
 
     public override void HandleLongPress()
     {
-        Debug.Log("Đã nhấn giữ trên Cây xanh");
+        // Debug.Log("Đã nhấn giữ trên Cây xanh");
     }
 }
