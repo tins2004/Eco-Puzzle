@@ -1,0 +1,271 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91ac4bac49bf7a94ebed7e43899d071d, type: 3}
+  m_Name: Data Level 3
+  m_EditorClassIdentifier: 
+  width: 11
+  height: 11
+  gridSize: 0.8
+  tiles:
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 1
+    type: 7
+  - active: 1
+    type: 1
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 1
+    type: 7
+  - active: 1
+    type: 1
+  - active: 1
+    type: 1
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  tileMissions:
+  - tileType: 5
+    requiredCount: 4
+  animalMissions:
+  - animalType: 1
+    requiredCount: 5
+  - animalType: 2
+    requiredCount: 2
+  limitType: 2
+  limitValue: 3
+  maxScore: 960

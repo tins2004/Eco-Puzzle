@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1079905275172",
+    "project_id": "eco-puzzle-mobile",
+    "storage_bucket": "eco-puzzle-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079905275172:android:2cfd2003280fecb26577b1",
+        "android_client_info": {
+          "package_name": "com.studio5b1.mobilegame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwMOOW6YhAhhY7IU2J-jvDl5pfUpSuxt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
