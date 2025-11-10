@@ -4,7 +4,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Data;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -193,9 +193,11 @@ public class UIManager : MonoBehaviour
                 Image icon = item.transform.Find("Icon").GetComponent<Image>();
                 TMP_Text text = item.transform.Find("Text").GetComponent<TMP_Text>();
 
+                item.name = $"Mission_Tile_{(TileType)kvp.Key}";
+
                 icon.sprite = tiles.Find(t => t.type == kvp.Key)?.icon;
                 icon.transform.localScale = Vector3.one * 1.5f;
-
+                
                 // Lưu vào cache
                 tileMissionCache[kvp.Key] = new MissionCache
                 {
@@ -215,6 +217,7 @@ public class UIManager : MonoBehaviour
                 Image icon = item.transform.Find("Icon").GetComponent<Image>();
                 TMP_Text text = item.transform.Find("Text").GetComponent<TMP_Text>();
 
+                item.name = $"Mission_Animal_{(AnimalType)kvp.Key}";
                 icon.sprite = animals.Find(a => a.type == kvp.Key)?.icon;
                 icon.transform.localScale = Vector3.one * 1.2f;
 
@@ -329,9 +332,19 @@ public class UIManager : MonoBehaviour
             // Hết lượt -> thua
             if (!isFinished)
             {
-                gameObject.GetComponent<CanvasGroup>().DOFade(0, 0.3f);
-                loseBox.ShowBox();
+                StartCoroutine(RecheckIsLose());
             }
+        }
+    }
+
+    private IEnumerator RecheckIsLose()
+    {
+        yield return new WaitForSeconds(0.7f);
+
+        if (limitValue <= 0 && !isFinished)
+        {
+            gameObject.GetComponent<CanvasGroup>().DOFade(0, 0.3f);
+            loseBox.ShowBox();
         }
     }
 
@@ -524,7 +537,9 @@ public class UIManager : MonoBehaviour
             case TutorialTargetType.Animal:
                 break;
             case TutorialTargetType.UIButton:
-                // Vị trí mask cho button
+                sizeMask = 3.7f;
+                tutorialMask.transform.position = GetVector3FromUIButton((string)tutorialManager.GetTargetAttributes());
+                tutorialManager.nextTextButton.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutBack);
                 break;
             case TutorialTargetType.Text:
             case TutorialTargetType.None:
@@ -588,6 +603,21 @@ public class UIManager : MonoBehaviour
         return new Vector3(wx, wy, 0f);
     }
 
+    private Vector3 GetVector3FromUIButton(string buttonName)
+    {
+        Image[] uis = FindObjectsOfType<Image>();
+        foreach (var ui in uis)
+        {
+            if (ui.name == buttonName)
+            {
+                return ui.transform.position;
+            }
+        }
+
+        Debug.LogError($"Không tìm thấy button với tên {buttonName}");
+        return Vector3.zero;
+    }
+
 
     private void ShowTextTutorial()
     {
@@ -595,7 +625,7 @@ public class UIManager : MonoBehaviour
         tutorialTextBox.SetActive(true);
         tutorialTextPanel.SetActive(tutorialManager.GetTargetType() == TutorialTargetType.Text);
 
-        tutorialText.text = tutorialManager.GetTutorialText();
+        tutorialManager.SetTutorialText(tutorialText);
 
         tutorialText.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutBack);
     }

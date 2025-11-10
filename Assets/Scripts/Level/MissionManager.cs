@@ -151,6 +151,7 @@ public class MissionManager : MonoBehaviour
             //     Debug.Log($"Hoàn thành nhiệm vụ: {animalType}");
             // }
 
+            uiManager.AddScore(50);
             uiManager.UpdateMissionUI(tileMissionCounts, animalMissionCounts);
         }
     }

@@ -11,6 +11,8 @@ public class LevelMap : MonoBehaviour
     {
         int maxLevel = GameData.GetMaxLevel() + 1; // Cho phép mở khóa level tiếp theo
 
+        maxLevel = HaveLevelData(maxLevel) ? maxLevel : maxLevel - 1; // Nếu level tiếp theo không có dữ liệu, giữ nguyên maxLevel hiện tại
+
         if (maxLevel < 1)
         {
             Debug.LogWarning("MaxLevel chưa được thiết lập đúng. Chuyển về Level 1.");
@@ -31,5 +33,14 @@ public class LevelMap : MonoBehaviour
             scrollView.UpdateData(itemData);
             scrollView.JumpTo(maxLevel);
         }
+    }
+
+    private bool HaveLevelData(int levelIndex)
+    {
+        string levelDataPath = $"Data/Level/Data Level {levelIndex}"; // đường dẫn trong Resources (không cần "Assets/")
+        
+        if (Resources.Load<LevelData>(levelDataPath) == null) return false;
+
+        return true;
     }
 }

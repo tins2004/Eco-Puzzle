@@ -63,7 +63,7 @@ public class TutorialManager : MonoBehaviour
 
         nextTextButton.onClick.AddListener(() =>
                                                 {
-                                                    if (GetTargetType() == TutorialTargetType.Text)
+                                                    if (GetTargetType() != TutorialTargetType.Tile)
                                                     {
                                                         AudioManager.Instance.PlaySFXButton();
                                                         NextTutorialStep();
@@ -165,11 +165,61 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    public string GetTutorialText()
+    public void SetTutorialText(TMP_Text tmp_Text)
     {
         var step = tutorialData.steps[tutorialStepIndex];
-        if (step.text_VN.Length < 0) return null;
+        LanguageManager languageManager = LanguageManager.Instance;
 
-        return step.text_VN;
+        switch (languageManager.currentLanguage)
+        {
+            case "English":
+                if (step.text_EN.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_EN);
+                break;
+            case "Vietnamese":
+                if (step.text_VN.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_VN);
+                break;
+            case "Chinese":
+                if (step.text_Chinese.Length < 0) break;
+                languageManager.DisplayChineseText(tmp_Text, step.text_Chinese);
+                break;
+            case "Japanese":
+                if (step.text_Japanese.Length < 0) break;
+                languageManager.DisplayJapaneseText(tmp_Text, step.text_Japanese);
+                break;
+            case "Korean":
+                if (step.text_Korean.Length < 0) break;
+                languageManager.DisplayKoreanText(tmp_Text, step.text_Korean);
+                break;
+            case "Spanish":
+                if (step.text_Spanish.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_Spanish);
+                break;
+            case "Portuguese":
+                if (step.text_Portuguese.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_Portuguese);
+                break;
+            case "French":
+                if (step.text_French.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_French);
+                break;
+            case "German":
+                if (step.text_German.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_German);
+                break;
+            case "Russian":
+                if (step.text_Russian.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_Russian);
+                break;
+            case "Thai":
+                if (step.text_Thai.Length < 0) break;
+                languageManager.DisplayThaiText(tmp_Text, step.text_Thai);
+                break;
+            default:
+                if (step.text_EN.Length < 0) break;
+                languageManager.DisplayEnglishText(tmp_Text, step.text_EN);
+                break;
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace FancyScrollView.Example09
         [SerializeField] private Sprite starFilled;
 
         private HomeManager homeManager;
+        private bool hasLoadData = false;
         ItemData data;
 
         public override void UpdateContent(ItemData itemData)
@@ -29,9 +30,9 @@ namespace FancyScrollView.Example09
             if (homeManager == null)
                 homeManager = FindObjectOfType<HomeManager>();
 
-            if (data == null)
-                data = itemData;
-
+            data = itemData;
+            hasLoadData = true;
+            SetLanguageCell();
 
             for (var i = 0; i < star.transform.childCount; i++)
             {
@@ -105,13 +106,15 @@ namespace FancyScrollView.Example09
         private void OnEnable()
         {
             if (homeManager == null || data == null) return;
-            SetLanguageCell();
+            if (hasLoadData) SetLanguageCell();
         }
         
         private void SetLanguageCell()
         {
-            TMP_Text buttonText = playButton.GetComponentInChildren<TMP_Text>();
+            if (homeManager == null || data == null || homeManager.languageManager == null) return;
 
+            TMP_Text buttonText = playButton.GetComponentInChildren<TMP_Text>();
+            
             switch (homeManager.languageManager.currentLanguage)
             {
                 case "English":

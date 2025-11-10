@@ -6,7 +6,7 @@ public class ForestTile : GridTileBase
 {
     public override TileType GetTileType() => TileType.T05_Forest;
 
-    public override void HandleLongPress()
+    public override void UpgradeTile()
     {
         // Xử lý sự kiện nhấn giữ cho ForestTile
         // Debug.Log("Đã nhấn giữ trên Rừng cây");

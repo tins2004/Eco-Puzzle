@@ -13,7 +13,7 @@ public class HomeManager : MonoBehaviour
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button shopButton;
     [SerializeField] private Button informationButton;
-    [SerializeField] private Button eventButton;
+    [SerializeField] private Button event7DaysButton;
     [SerializeField] private Button commentButton;
     [SerializeField] private TMP_Text gemText;
 
@@ -32,9 +32,9 @@ public class HomeManager : MonoBehaviour
     [SerializeField] private Button closeShopButton;
 
     [Header("Events")]
-    [SerializeField] private Transform eventsParent;
-    [SerializeField] private Transform eventsView;
-    [SerializeField] private Button closeEventsButton;
+    [SerializeField] private Transform event7DaysParent;
+    [SerializeField] private Transform event7DaysView;
+    [SerializeField] private Button closeEvent7DaysButton;
 
     [Header("Comment")]
     [SerializeField] private string commentURL = "https://github.com/";
@@ -46,6 +46,10 @@ public class HomeManager : MonoBehaviour
 
     private string timeTest;
 
+    private void Awake() {
+        audioManager = AudioManager.Instance;
+        languageManager = LanguageManager.Instance;
+    }
 
     public async void Start()
     {
@@ -57,9 +61,6 @@ public class HomeManager : MonoBehaviour
         timeTest = await GameData.GetInternetTime();
 
         // ----- Setup And Open ------
-        audioManager = AudioManager.Instance;
-        languageManager = LanguageManager.Instance;
-
         settingManager = GetComponent<SettingManager>();
         settingManager.SetupSettingStatus();
 
@@ -96,16 +97,16 @@ public class HomeManager : MonoBehaviour
         });
 
         // --- Events ---
-        eventButton.onClick.AddListener(() =>
+        event7DaysButton.onClick.AddListener(() =>
         {
             audioManager.PlaySFXButton();
             CloseLevelMap(0f);
-            OpenEvents(0.7f);
+            OpenEvent7Days(0.7f);
         });
-        closeEventsButton.onClick.AddListener(() =>
+        closeEvent7DaysButton.onClick.AddListener(() =>
         {
             audioManager.PlaySFXButton();
-            CloseEvents(0f);
+            CloseEvent7Days(0f);
             OpenLevelMap(0.7f);
         });
 
@@ -113,7 +114,7 @@ public class HomeManager : MonoBehaviour
         commentButton.onClick.AddListener(() =>
         {
             audioManager.PlaySFXButton();
-            Application.OpenURL(commentURL);
+            // Application.OpenURL(commentURL);
         });
     }
 
@@ -125,14 +126,14 @@ public class HomeManager : MonoBehaviour
     // ----- Level map animations -----
     private void OpenLevelMap(float waitTime)
     {
-        gemText.text = GameData.GetCurrentGem().ToString() + "\n" + timeTest;
+        gemText.text = GameData.GetCurrentGem().ToString() + "\n"  + FireBaseAnalytics.Instance.IsFirebaseReady()  + "\n" + timeTest;
         
 
         levelMapParent.gameObject.SetActive(true);
 
         levelMapView.localScale = Vector3.zero;
         informationButton.transform.localScale = Vector3.zero;
-        eventButton.transform.localScale = Vector3.zero;
+        event7DaysButton.transform.localScale = Vector3.zero;
         commentButton.transform.localScale = Vector3.zero;
         settingsButton.transform.localScale = Vector3.zero;
         shopButton.transform.localScale = Vector3.zero;
@@ -144,11 +145,11 @@ public class HomeManager : MonoBehaviour
         seq.Append(informationButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
-        seq.Append(eventButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
+        seq.Append(commentButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
         seq.Join(settingsButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
-        seq.Append(commentButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
+        seq.Append(event7DaysButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
         seq.Join(shopButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
@@ -166,7 +167,7 @@ public class HomeManager : MonoBehaviour
         seq.Append(levelMapView.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
-        seq.Append(eventButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.Append(event7DaysButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.Join(settingsButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.Join(commentButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.Join(shopButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
@@ -185,9 +186,9 @@ public class HomeManager : MonoBehaviour
 
     // ----- Settings animations -----
     private void OpenSettings(float waitTime)
-    {        
+    {
         settingsParent.gameObject.SetActive(true);
-        settingsView.localScale = Vector3.zero;
+        // settingsView.localScale = Vector3.zero;
         closeSettingButton.transform.localScale = Vector3.zero;
         backgroundMusicButton.transform.localScale = Vector3.zero;
         musicVolumeButton.transform.localScale = Vector3.zero;
@@ -213,8 +214,8 @@ public class HomeManager : MonoBehaviour
         seq.Append(musicToggleButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
-        seq.Append(settingsView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
-        seq.JoinCallback(() => audioManager.PlaySFXPop());
+        // seq.Append(settingsView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        // seq.JoinCallback(() => audioManager.PlaySFXPop());
 
         seq.Play();
     }
@@ -224,8 +225,8 @@ public class HomeManager : MonoBehaviour
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(waitTime);
 
-        seq.Append(settingsView.DOScale(0, 0.2f).SetEase(Ease.InBack));
-        seq.JoinCallback(() => audioManager.PlaySFXPop());
+        // seq.Append(settingsView.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        // seq.JoinCallback(() => audioManager.PlaySFXPop());
 
         seq.Append(languageButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.Join(backgroundMusicButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
@@ -292,31 +293,31 @@ public class HomeManager : MonoBehaviour
     }
 
     // ----- Events animations -----
-    private void OpenEvents(float waitTime)
+    private void OpenEvent7Days(float waitTime)
     {
-        eventsParent.gameObject.SetActive(true);
-        eventsView.localScale = Vector3.zero;
-        closeEventsButton.transform.localScale = Vector3.zero;
+        event7DaysParent.gameObject.SetActive(true);
+        event7DaysView.localScale = Vector3.zero;
+        closeEvent7DaysButton.transform.localScale = Vector3.zero;
 
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(waitTime);
 
-        seq.Append(closeEventsButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
-        seq.Append(eventsView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.Append(closeEvent7DaysButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.Append(event7DaysView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
         seq.Play();
     }
 
-    private void CloseEvents(float waitTime)
+    private void CloseEvent7Days(float waitTime)
     {
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(waitTime);
 
-        seq.Append(eventsView.DOScale(0, 0.2f).SetEase(Ease.InBack));
-        seq.Append(closeEventsButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.Append(event7DaysView.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.Append(closeEvent7DaysButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
 
         seq.AppendCallback(() =>
         {
-            eventsParent.gameObject.SetActive(false);
+            event7DaysParent.gameObject.SetActive(false);
         });
 
         seq.Play();

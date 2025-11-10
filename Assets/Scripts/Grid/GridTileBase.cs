@@ -70,7 +70,7 @@ public abstract class GridTileBase : MonoBehaviour
     /// <summary>
     /// Xử lý sự kiện nhấn giữ trên tile (cần được override ở lớp con).
     /// </summary>
-    public abstract void HandleLongPress();
+    public abstract void UpgradeTile();
 
     /// <summary>
     /// Nhấc tile lên một chút.
@@ -125,7 +125,7 @@ public abstract class GridTileBase : MonoBehaviour
         gridManager.SetTempTile(Coordinates, newType);
 
         // Tạo tile mới
-        GridTileBase newTile = Instantiate(prefab, transform.position, transform.rotation, transform.parent)
+        GridTileBase newTile = Instantiate(prefab, originalPosition, transform.rotation, transform.parent)
                                     .GetComponent<GridTileBase>();
         if (newTile != null)
             newTile.Init(Coordinates);

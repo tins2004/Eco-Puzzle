@@ -5,7 +5,7 @@ public class XavanTile : GridTileBase
     public override TileType GetTileType() => TileType.T09_Xavan;
 
 
-    public override void HandleLongPress()
+    public override void UpgradeTile()
     {
         missionManager.ReduceMoveStep();
         ReplaceTile(TileType.T04_Green_Tree, gridManager.GetTilePrefab(TileType.T04_Green_Tree), playSound: true);

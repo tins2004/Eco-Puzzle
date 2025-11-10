@@ -1,5 +1,6 @@
 // TileClickHandler: Xử lý thao tác của tile
 
+using System.Collections;
 using UnityEngine;
 
 public class TileClickHandler : MonoBehaviour
@@ -7,10 +8,10 @@ public class TileClickHandler : MonoBehaviour
     [HideInInspector] public GridTileBase tile;
     private LevelManager levelManager;
 
-    [Header("Điều khiển - Nhấn giữ")]
-    [SerializeField] private float holdTime = 0.3f; // Thời gian giữ (giây) để tính là "nhấn giữ"
-    private float pressStartTime;
-    private bool isPressing = false;
+    // [Header("Điều khiển - Nhấn giữ")]
+    // [SerializeField] private float holdTime = 0.3f; // Thời gian giữ (giây) để tính là "nhấn giữ"
+    // private float pressStartTime;
+    // private bool isPressing = false;
 
     private bool isTutorialActive = false;
 
@@ -41,57 +42,65 @@ public class TileClickHandler : MonoBehaviour
 
             if (touch.phase == TouchPhase.Began && IsPointerOverTile(touch.position))
             {
-                pressStartTime = Time.time;
-                isPressing = true;
+                // pressStartTime = Time.time;
+                // isPressing = true;
+                UpgradeTile();
+                UseBoosters();
             }
-            else if (touch.phase == TouchPhase.Stationary && isPressing)
-            {
-                if (Time.time - pressStartTime >= holdTime)
-                {
-                    tile.LiftTile();
-                    if (isTutorialActive)
-                        levelManager.uiManager.HideMaskTutorial();
-                }
-            }
-            else if (touch.phase == TouchPhase.Ended && isPressing)
-            {
-                tile.ResetTilePosition();
-                if (Time.time - pressStartTime >= holdTime)
-                    HandleLongPress();
-                else
-                    OnClick();
+            // else if (touch.phase == TouchPhase.Stationary && isPressing)
+            // {
+            //     if (Time.time - pressStartTime >= holdTime)
+            //     {
+            //         tile.LiftTile();
+            //         if (isTutorialActive)
+            //             levelManager.uiManager.HideMaskTutorial();
+            //     }
+            // }
+            // else if (touch.phase == TouchPhase.Ended && isPressing)
+            // {
+            //     tile.ResetTilePosition();
+            //     // if (Time.time - pressStartTime >= holdTime)
+            //     //     HandleLongPress();
+            //     // else
+            //     //     OnClick();
+            //     UpgradeTile();
+            //     UseBoosters();
 
-                isPressing = false;
-            }
+            //     isPressing = false;
+            // }
         }
         // --- Chuột ---
         else
         {
             if (Input.GetMouseButtonDown(0) && IsPointerOverTile(Input.mousePosition))
             {
-                pressStartTime = Time.time;
-                isPressing = true;
+                // pressStartTime = Time.time;
+                // isPressing = true;
+                UpgradeTile();
+                UseBoosters();
             }
-            else if (Input.GetMouseButton(0) && isPressing)
-            {
-                if (Time.time - pressStartTime >= holdTime)
-                {
-                    tile.LiftTile();
-                    if (isTutorialActive)
-                        levelManager.uiManager.HideMaskTutorial();
+            // else if (Input.GetMouseButton(0) && isPressing)
+            // {
+            //     if (Time.time - pressStartTime >= holdTime)
+            //     {
+            //         tile.LiftTile();
+            //         if (isTutorialActive)
+            //             levelManager.uiManager.HideMaskTutorial();
 
-                }
-            }
-            else if (Input.GetMouseButtonUp(0) && isPressing)
-            {
-                tile.ResetTilePosition();
-                if (Time.time - pressStartTime >= holdTime)
-                    HandleLongPress();
-                else
-                    OnClick();
+            //     }
+            // }
+            // else if (Input.GetMouseButtonUp(0) && isPressing)
+            // {
+            //     // tile.ResetTilePosition();
+            //     // if (Time.time - pressStartTime >= holdTime)
+            //     //     HandleLongPress();
+            //     // else
+            //     //     OnClick();
+            //     UpgradeTile();
+            //     UseBoosters();
 
-                isPressing = false;
-            }
+            //     isPressing = false;
+            // }
         }
     }
 
@@ -104,7 +113,7 @@ public class TileClickHandler : MonoBehaviour
         {
             TutorialTargetType targetType = levelManager.tutorialManager.GetTargetType();
 
-            if (targetType == TutorialTargetType.Text) return false;
+            if (targetType == TutorialTargetType.Text || targetType == TutorialTargetType.UIButton) return false;
 
             if (targetType == TutorialTargetType.Tile && targetType != TutorialTargetType.None)
             {
@@ -127,7 +136,7 @@ public class TileClickHandler : MonoBehaviour
         return hit != null && hit.transform == transform;
     }
 
-    private void OnClick()
+    private void UseBoosters()
     {
         if (levelManager.boosterManager.boosterSwapTile.HasBooster())
         {
@@ -146,7 +155,7 @@ public class TileClickHandler : MonoBehaviour
         }
     }
 
-    private void HandleLongPress()
+    private void UpgradeTile()
     {
         if (levelManager.boosterManager.boosterSwapTile.IsReady() ||
         levelManager.boosterManager.boosterUpgrade.IsReady() ||
@@ -161,8 +170,15 @@ public class TileClickHandler : MonoBehaviour
                 isTutorialActive = false;
             }
             // Debug.Log($"Nhấn giữu tại {tile.Coordinates}: {tile.GetTileType()}");
-            tile.HandleLongPress();
-            levelManager.audioManager.VibratePop();
+            StartCoroutine(StartUpgradeTile());
         }
+    }
+
+    private IEnumerator StartUpgradeTile()
+    {
+        tile.LiftTile();
+        yield return new WaitForSeconds(0.2f);
+        levelManager.audioManager.VibratePop();
+        tile.UpgradeTile();
     }
 }

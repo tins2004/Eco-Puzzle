@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 11
   height: 11
-  gridSize: 0.8
+  gridSize: 1
   tiles:
   - active: 0
     type: 0
@@ -110,14 +110,6 @@ MonoBehaviour:
     type: 0
   - active: 0
     type: 0
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
-  - active: 1
-    type: 7
-  - active: 1
-    type: 1
   - active: 0
     type: 0
   - active: 0
@@ -128,40 +120,6 @@ MonoBehaviour:
     type: 0
   - active: 0
     type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 0
-    type: 0
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
   - active: 0
     type: 0
   - active: 0
@@ -179,11 +137,53 @@ MonoBehaviour:
   - active: 0
     type: 0
   - active: 1
-    type: 7
+    type: 3
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
   - active: 1
-    type: 1
+    type: 3
   - active: 1
-    type: 1
+    type: 3
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
   - active: 0
     type: 0
   - active: 0
@@ -260,12 +260,8 @@ MonoBehaviour:
     type: 0
   tileMissions:
   - tileType: 5
-    requiredCount: 4
-  animalMissions:
-  - animalType: 1
-    requiredCount: 5
-  - animalType: 2
-    requiredCount: 2
+    requiredCount: 1
+  animalMissions: []
   limitType: 2
-  limitValue: 3
-  maxScore: 960
+  limitValue: 6
+  maxScore: 185

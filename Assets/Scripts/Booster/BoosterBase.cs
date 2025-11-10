@@ -19,7 +19,6 @@ public abstract class BoosterBase : MonoBehaviour
         canClick = true;
 
         SetBoosterNumberKey();
-        PlayerPrefs.SetInt(boosterNumberKey, 5);
 
         levelManager = FindObjectOfType<LevelManager>();
         gridManager = levelManager.gridMapManager;

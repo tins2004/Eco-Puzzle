@@ -112,10 +112,6 @@ MonoBehaviour:
     type: 0
   - active: 0
     type: 0
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
   - active: 0
     type: 0
   - active: 0
@@ -134,12 +130,16 @@ MonoBehaviour:
     type: 0
   - active: 0
     type: 0
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
-  - active: 1
-    type: 1
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
+  - active: 0
+    type: 0
   - active: 0
     type: 0
   - active: 0
@@ -259,9 +259,11 @@ MonoBehaviour:
   - active: 0
     type: 0
   tileMissions:
-  - tileType: 5
-    requiredCount: 2
+  - tileType: 2
+    requiredCount: 1
+  - tileType: 4
+    requiredCount: 1
   animalMissions: []
   limitType: 2
-  limitValue: 20
-  maxScore: 448
+  limitValue: 6
+  maxScore: 180

@@ -61,6 +61,15 @@ public class TutorialDataEditor : Editor
 
             step.text_VN = EditorGUILayout.TextField("Text (VN)", step.text_VN);
             step.text_EN = EditorGUILayout.TextField("Text (EN)", step.text_EN);
+            step.text_Chinese = EditorGUILayout.TextField("Text (Chinese)", step.text_Chinese);
+            step.text_Japanese = EditorGUILayout.TextField("Text (Japanese)", step.text_Japanese);
+            step.text_Korean = EditorGUILayout.TextField("Text (Korean)", step.text_Korean);
+            step.text_Spanish = EditorGUILayout.TextField("Text (Spanish)", step.text_Spanish);
+            step.text_Portuguese = EditorGUILayout.TextField("Text (Portuguese)", step.text_Portuguese);
+            step.text_French = EditorGUILayout.TextField("Text (French)", step.text_French);
+            step.text_German = EditorGUILayout.TextField("Text (German)", step.text_German);
+            step.text_Russian = EditorGUILayout.TextField("Text (Russian)", step.text_Russian);
+            step.text_Thai = EditorGUILayout.TextField("Text (Thai)", step.text_Thai);
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.Space();

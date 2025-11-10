@@ -6,7 +6,15 @@ public class BeginManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        sceneTransition.OpenEffect("Home Scene");
+        int maxLevel = GameData.GetMaxLevel();
+        if (maxLevel == 0)
+        {
+            sceneTransition.OpenEffect("Game Scene");
+        }
+        else
+        {
+            sceneTransition.OpenEffect("Home Scene");
+        }
     }
 
     // Update is called once per frame

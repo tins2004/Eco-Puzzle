@@ -24,7 +24,7 @@ public static class GameData
     private const string LastTimeKey = "LastTimeStatus";
 
     // ----- Level Progress -----
-    public static int GetMaxLevel() => PlayerPrefs.GetInt(MaxLevelKey, 1);
+    public static int GetMaxLevel() => PlayerPrefs.GetInt(MaxLevelKey, 0);
 
     public static void SetMaxLevel(int level)
     {
@@ -57,7 +57,7 @@ public static class GameData
     public static void MinusGem(int value)
     {
         int currentGem = GetCurrentGem();
-        PlayerPrefs.SetInt(GemKey, (currentGem - value) < 0 ? 0 : (currentGem - value));
+        PlayerPrefs.SetInt(GemKey, (currentGem - value) < -9999 ? -9999 : (currentGem - value));
     }
 
     public static void AddGem(int value)

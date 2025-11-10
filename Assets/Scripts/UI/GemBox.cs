@@ -46,7 +46,7 @@ public class GemBox : MonoBehaviour
 
         gemIcon.gameObject.SetActive(true);
 
-        int valueChange = Random.Range(4, 11);
+        int valueChange = 10;
         // Debug.Log("Giá trị thay đổi: " + valueChange);
         gemText.text = "0";
 
@@ -56,6 +56,8 @@ public class GemBox : MonoBehaviour
 
         seq.AppendInterval(0.5f);
         if (isMinus)
+        {
+            valueChange = Random.Range(10, 30);
             seq.AppendCallback(() =>
             DOTween.To(() => 0, x =>
             {
@@ -63,7 +65,10 @@ public class GemBox : MonoBehaviour
                 gemText.text = "-" + valueChange.ToString();
             }, valueChange, 0.8f)
             .SetEase(Ease.InQuad));
+        }
         else
+        {
+            valueChange = Random.Range(4, 18);
             seq.AppendCallback(() =>
             DOTween.To(() => 0, x =>
             {
@@ -71,6 +76,7 @@ public class GemBox : MonoBehaviour
                 gemText.text = "+" + valueChange.ToString();
             }, valueChange, 0.8f)
             .SetEase(Ease.InQuad));
+        }
 
         seq.AppendInterval(1f);
         seq.Append(gemText.transform.DOPunchScale(Vector3.one * 0.5f, 0.3f, 8, 1));
@@ -84,7 +90,11 @@ public class GemBox : MonoBehaviour
         seq.JoinCallback(() => audioManager.PlaySFXFailClick());
         seq.AppendCallback(() =>
         {
-            if (isMinus == true) GameData.MinusGem(valueChange);
+            if (isMinus == true)
+            {
+                FireBaseAnalytics.Instance.LogLevelFail(GameData.GetCurrentLevel());
+                GameData.MinusGem(valueChange);
+            }
             else GameData.AddGem(valueChange);
 
             boxUI.HideBox();
