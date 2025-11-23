@@ -96,6 +96,8 @@ public class LevelDataEditor : Editor
             level.tileMissions[i].requiredCount = EditorGUILayout.IntField(level.tileMissions[i].requiredCount);
             if (GUILayout.Button("X", GUILayout.Width(20))) level.tileMissions.RemoveAt(i);
             EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
         }
         if (GUILayout.Button("Thêm Tile Mission")) level.tileMissions.Add(new TileMission());
 
@@ -116,34 +118,61 @@ public class LevelDataEditor : Editor
         }
         if (GUILayout.Button("Thêm Animal Mission")) level.animalMissions.Add(new AnimalMission());
 
+        // tile lock
+        EditorGUILayout.LabelField("Tile lock", EditorStyles.miniBoldLabel);
+        for (int i = 0; i < level.tileLocks.Count; i++)
+        {
+            level.tileLocks[i].SetPosition(EditorGUILayout.Vector2IntField("Tile Pos", level.tileLocks[i].position));
+            EditorGUILayout.BeginHorizontal();
+            level.tileLocks[i].SetRequiredCount(EditorGUILayout.IntField(level.tileLocks[i].requiredCount));
+            if (GUILayout.Button("X", GUILayout.Width(20))) level.tileLocks.RemoveAt(i);
+            EditorGUILayout.EndHorizontal();
+
+        }
+        if (GUILayout.Button("Thêm Tile lock")) level.tileLocks.Add(new TileLock());
+
         if (GUI.changed) EditorUtility.SetDirty(level);
     }
 
     private void GenerateTileMissions(LevelData level)
     {
-        Dictionary<TileType, int> counts = new Dictionary<TileType, int>();
+        // Gom dữ liệu theo TileType
+        Dictionary<TileType, TileMission> missionMap = new Dictionary<TileType, TileMission>();
 
-        foreach (var tile in level.tiles)
+        for (int x = 0; x < level.height; x++)
         {
-            if (tile.active && tile.type != TileType.T00_Null)
+            for (int y = 0; y < level.width; y++)
             {
-                if (!counts.ContainsKey(tile.type))
-                    counts[tile.type] = 0;
-                counts[tile.type]++;
+                int index = x * level.width + y;
+                TileData tile = level.tiles[index];
+
+                if (tile.active && tile.type != TileType.T00_Null)
+                {
+                    // Nếu chưa có mission cho tile này → tạo mới
+                    if (!missionMap.ContainsKey(tile.type))
+                    {
+                        missionMap[tile.type] = new TileMission
+                        {
+                            tileType = tile.type,
+                            requiredCount = 0,
+                            positions = new List<Vector2Int>()
+                        };
+                    }
+
+                    // Tăng số lượng
+                    missionMap[tile.type].requiredCount++;
+
+                    // Ghi tọa độ
+                    missionMap[tile.type].positions.Add(new Vector2Int(x, y));
+                }
             }
         }
 
-        level.tileMissions.Clear();
-        foreach (var kvp in counts)
-        {
-            level.tileMissions.Add(new TileMission
-            {
-                tileType = kvp.Key,
-                requiredCount = kvp.Value
-            });
-        }
+        // Ghi vào LevelData
+        level.tileMissions = missionMap.Values.ToList();
 
         EditorUtility.SetDirty(level);
-        Debug.Log("Đã tạo Tile Mission từ Map!");
+        Debug.Log("Đã tạo Tile Mission từ Map (có thêm vị trí từng tile)!");
     }
+
 }

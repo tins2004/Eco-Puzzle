@@ -27,6 +27,12 @@ public abstract class GridTileBase : MonoBehaviour
     [HideInInspector] public Vector3 originalPosition;
     private float liftAmount = 0.1f; // Khoảng nhích trục Y
 
+    public int LockCount { get; private set; } = 0;
+    public bool IsLocked => LockCount > 0;
+    private Color normalColor = Color.white;
+    private Color lockedColor = new Color(0.4f, 0.4f, 0.4f, 1f);  // màu tối
+
+
 
     /// <summary>
     /// Khởi tạo tile với tọa độ xác định.
@@ -321,4 +327,20 @@ public abstract class GridTileBase : MonoBehaviour
         // Còn lại là rìa
         return true;
     }
+
+    public void SetLockCount(int value)
+    {
+        LockCount = Mathf.Max(0, value);
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = IsLocked ? new Color(0.55f, 0.55f, 0.55f) : Color.white;
+        }
+    }
+
+    public void ReduceLockPoint(int amount = 1)
+    {
+        SetLockCount(LockCount - amount);
+    }
+
 }

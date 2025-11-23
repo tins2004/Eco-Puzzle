@@ -36,6 +36,13 @@ public class HomeManager : MonoBehaviour
     [SerializeField] private Transform event7DaysView;
     [SerializeField] private Button closeEvent7DaysButton;
 
+    [Header("Daily Reward")]
+    [SerializeField] private Transform dailyRewardParent;
+    [SerializeField] private Transform dailyRewardView;
+    [SerializeField] private Button dailyRewardButton;
+    [SerializeField] private Button closeDailyRewardButton;
+
+
     [Header("Comment")]
     [SerializeField] private string commentURL = "https://github.com/";
 
@@ -109,6 +116,22 @@ public class HomeManager : MonoBehaviour
             CloseEvent7Days(0f);
             OpenLevelMap(0.7f);
         });
+
+        // --- Daily Reward ---
+        dailyRewardButton.onClick.AddListener(() =>
+        {
+            audioManager.PlaySFXButton();
+            CloseLevelMap(0f);
+            OpenDailyReward(0.7f);
+        });
+
+        closeDailyRewardButton.onClick.AddListener(() =>
+        {
+            audioManager.PlaySFXButton();
+            CloseDailyReward(0f);
+            OpenLevelMap(0.7f);
+        });
+
 
         // --- Comment ---
         commentButton.onClick.AddListener(() =>
@@ -322,4 +345,37 @@ public class HomeManager : MonoBehaviour
 
         seq.Play();
     }
+
+    // ----- Daily Reward animations -----
+    private void OpenDailyReward(float waitTime)
+    {
+        dailyRewardParent.gameObject.SetActive(true);
+        dailyRewardView.localScale = Vector3.zero;
+        closeDailyRewardButton.transform.localScale = Vector3.zero;
+
+        Sequence seq = DOTween.Sequence();
+        seq.PrependInterval(waitTime);
+
+        seq.Append(closeDailyRewardButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.Append(dailyRewardView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+
+        seq.Play();
+    }
+
+    private void CloseDailyReward(float waitTime)
+    {
+        Sequence seq = DOTween.Sequence();
+        seq.PrependInterval(waitTime);
+
+        seq.Append(dailyRewardView.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.Append(closeDailyRewardButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+
+        seq.AppendCallback(() =>
+        {
+            dailyRewardParent.gameObject.SetActive(false);
+        });
+
+        seq.Play();
+    }
+
 }

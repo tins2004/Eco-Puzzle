@@ -7,6 +7,30 @@ public class TileMission
 {
     public TileType tileType;
     public int requiredCount;
+
+    // Thêm danh sách các vị trí (x, y)
+    public List<Vector2Int> positions = new List<Vector2Int>();
+}
+[Serializable]
+public class TileLock
+{
+    public Vector2Int position { get; private set; }
+    public int requiredCount { get; private set; }
+
+
+
+    public Vector2Int GetPositon() => position;
+    public int GetRequiredCount() => requiredCount;
+
+    public void SetPosition(Vector2Int pos)
+    {
+        position = pos;
+    }
+
+    public void SetRequiredCount(int count)
+    {
+        requiredCount = count;
+    }
 }
 
 
@@ -27,6 +51,7 @@ public class LevelData : ScriptableObject
     public TileData[] tiles;
     public List<TileMission> tileMissions = new List<TileMission>();
     public List<AnimalMission> animalMissions = new List<AnimalMission>();
+    public List<TileLock> tileLocks = new List<TileLock>();
 
     [Header("Level Limit Settings")]
     public LimitType limitType = LimitType.None;

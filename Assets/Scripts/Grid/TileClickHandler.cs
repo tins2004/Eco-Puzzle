@@ -33,6 +33,7 @@ public class TileClickHandler : MonoBehaviour
     {
         // Nếu đang ở trạng thái chọn động vật thì không thể thay đổi grid
         if (levelManager.animalManager.selectedAnimal != AnimalType.A00_Null) return;
+        if (tile.IsLocked) return;
         if (!levelManager.uiManager.canMove()) return;
 
         // --- Cảm ứng ---

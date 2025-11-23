@@ -8,5 +8,6 @@ public class WaterLakeTile : GridTileBase
     public override void UpgradeTile()
     {
         // ReplaceTile(TileType.T01_Barren_Land, gridManager.GetTilePrefab(TileType.T01_Barren_Land));
+        ResetTilePosition();
     }
 }

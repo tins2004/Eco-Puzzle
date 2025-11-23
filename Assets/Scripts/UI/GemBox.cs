@@ -106,10 +106,10 @@ public class GemBox : MonoBehaviour
                     levelManager.ChangeToHomeScene();
                     break;
                 case 1: //Retry
-                    levelManager.NextLevel(false);
+                    levelManager.RetryLevel();
                     break;
                 case 2: //Next Level
-                    levelManager.NextLevel(true);
+                    levelManager.NextLevel();
                     break;
                 default:
                     Debug.LogError("Sai giá trị chuyển Scene");
@@ -119,5 +119,19 @@ public class GemBox : MonoBehaviour
 
 
         seq.Play();
+    }
+
+    public void RetryWithoutGem()
+    {
+        // Chỉ load lại level, không hiển UI gem, không trừ gem
+        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        if (levelManager != null)
+        {
+            levelManager.RetryLevel();
+        }
+        else
+        {
+            Debug.LogWarning("Không tìm thấy LevelManager khi RetryWithoutGem!");
+        }
     }
 }

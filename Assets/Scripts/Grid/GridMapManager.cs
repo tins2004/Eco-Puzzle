@@ -1,3 +1,4 @@
+
 // GridMapManager: Tạo và quản lý lưới tile trong Scene dựa trên dữ liệu từ GridMapData.
 
 using System;
@@ -21,6 +22,9 @@ public class GridMapManager : MonoBehaviour
     private float delayStepGenerateTile = 0.02f;
     private Grid grid;
     public Dictionary<Vector3Int, TileType> tempTileStates = new Dictionary<Vector3Int, TileType>();
+    // Lưu danh sách tile bị khóa
+    public Dictionary<Vector3Int, int> lockedTiles = new Dictionary<Vector3Int, int>();
+
 
     // Animal
     private List<GridTileBase> highlightedTiles = new List<GridTileBase>();
@@ -39,13 +43,30 @@ public class GridMapManager : MonoBehaviour
 
     public void StartGrid()
     {
-        Debug.Log("Khởi tạo Grid Map với dữ liệu bản đồ: " + mapData.name);
+        if (mapData == null || mapData.tiles == null)
+        {
+            Debug.LogWarning("Map data is empty!");
+            return;
+        }
 
         grid = GetComponent<Grid>();
         Generate();
 
-        transform.localScale = new Vector3(mapData.gridSize, mapData.gridSize, 1f);
+        foreach(TileLock tilelock in mapData.tileLocks)
+        {
+            if (tilelock == null) continue;
+            Vector3Int pos = new Vector3Int(tilelock.position.x, tilelock.position.y,0);
+           
+            SetTileLockCount(pos, tilelock.requiredCount);
+        }
+
+
+        //transform.localScale = new Vector3(mapData.gridSize, mapData.gridSize, 1f);
+
     }
+
+
+
 
     public GameObject GetTilePrefab(TileType type)
     {
@@ -159,6 +180,12 @@ public class GridMapManager : MonoBehaviour
                     var tile = Instantiate(prefab, worldPos, Quaternion.identity, transform);
                     tile.Init(cellPos);
 
+                    if (lockedTiles.ContainsKey(cellPos))
+                    {
+                        tile.SetLockCount(lockedTiles[cellPos]);
+                    }
+
+
                     // Lưu vào data ảo
                     tempTileStates[cellPos] = tileData.type;
 
@@ -223,6 +250,14 @@ public class GridMapManager : MonoBehaviour
 
         foreach (var tile in allTiles)
         {
+            // === CHẶN TILE BỊ KHÓA ===
+            if (tile.IsLocked)
+            {
+                // Debug cho rõ
+                Debug.Log($"⛔ Tile {tile.Coordinates} đang bị khóa -> BỎ QUA xử lý UpdateMapState");
+                continue;
+            }
+
             if (tile is WaterLakeTile)
             {
                 HandleWaterLake(tile, newType, newTile);
@@ -419,11 +454,31 @@ public class GridMapManager : MonoBehaviour
     /// <param name="prefab">prefab của tile mới</param>
     public IEnumerator ReplaceTile(GridTileBase tile, TileType newType, GameObject prefab)
     {
+        // tile này bị khóa thì không được replace
+        if (tile.IsLocked)
+        {
+            Debug.Log($"⛔ Tile {tile.Coordinates} bị khóa -> KHÔNG CHO ReplaceTile()");
+            yield break;
+        }
+
+        // === GIẢM ĐIỂM KHÓA TILE LÂN CẬN ===
+        foreach (var neighbor in tile.GetNeighbors())
+        {
+            if (neighbor.IsLocked)
+            {
+                Debug.Log($"Tile {neighbor.Coordinates} mất 1 điểm khóa vì có tile lân cận thay đổi");
+                neighbor.ReduceLockPoint(1);
+                lockedTiles[neighbor.Coordinates] = neighbor.LockCount;
+            }
+        }
+
         tile.LiftTile();
         yield return new WaitForSeconds(0.2f);
         tile.ResetTilePosition();
         tile.ReplaceTile(newType, prefab);
     }
+
+
 
 
     // ========== Xử lý vùng và động vật =========
@@ -591,4 +646,14 @@ public class GridMapManager : MonoBehaviour
         highlightedTiles.Clear();
         shadowedTiles.Clear();
     }
+
+    public void SetTileLockCount(Vector3Int coords, int lockCount)
+    {
+        lockedTiles[coords] = lockCount;
+
+        var tile = GetTileAt(coords);
+        if (tile != null)
+            tile.SetLockCount(lockCount);
+    }
+
 }

@@ -107,20 +107,33 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void NextLevel(bool isRetry = false)
+    public void NextLevel()
     {
+        Debug.Log("qua màn tiếp theo");
         Sequence seq = DOTween.Sequence();
         seq.AppendInterval(0.5f);
         seq.Append(gridMapManager.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.Append(uiManager.GetComponent<CanvasGroup>().DOFade(0, 0.3f));
+
         seq.AppendCallback(() =>
         {
-            if (isRetry) currentLevelIndex++;
-            PlayerPrefs.SetInt("CurrentLevel", currentLevelIndex); // lưu level
-            // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // restart scene
+            currentLevelIndex++;
+            PlayerPrefs.SetInt("CurrentLevel", currentLevelIndex);
+
             sceneTransition.OpenEffect(SceneManager.GetActiveScene().name);
         });
     }
+
+    public void RetryLevel()
+    {
+        Debug.Log("đã chơi lại");
+        // Không tăng level, chỉ load lại data của level hiện tại
+        PlayerPrefs.SetInt("CurrentLevel", currentLevelIndex);
+
+        // Load lại scene ngay lập tức, không tween
+        sceneTransition.OpenEffect(SceneManager.GetActiveScene().name, false);
+    }
+
 
     public void RestartLevelTest()
     {

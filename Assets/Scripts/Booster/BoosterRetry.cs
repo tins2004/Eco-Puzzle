@@ -18,7 +18,16 @@ public class BoosterRetry : BoosterBase
 
         // LevelManager levelManager = FindObjectOfType<LevelManager>();
         // levelManager.NextLevel(isRetry: false);
-        gemBox.ShowGem(true, 1);
+        //gemBox.ShowGem(true, 1);
+
+        if (gemBox != null)
+        {
+            gemBox.RetryWithoutGem();
+        }
+        else
+        {
+            Debug.LogWarning("GemBox chưa được gán trong BoosterRetry!");
+        }
     }
 
     public override void CancelActivate()

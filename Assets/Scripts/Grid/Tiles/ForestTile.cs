@@ -11,5 +11,6 @@ public class ForestTile : GridTileBase
         // Xử lý sự kiện nhấn giữ cho ForestTile
         // Debug.Log("Đã nhấn giữ trên Rừng cây");
         // Thêm logic xử lý tại đây nếu cần
+        ResetTilePosition();
     }
 }

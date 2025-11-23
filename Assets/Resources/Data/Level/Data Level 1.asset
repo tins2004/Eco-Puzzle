@@ -259,10 +259,11 @@ MonoBehaviour:
   - active: 0
     type: 0
   tileMissions:
-  - tileType: 2
-    requiredCount: 1
-  - tileType: 4
-    requiredCount: 1
+  - tileType: 1
+    requiredCount: 2
+    positions:
+    - {x: 6, y: 4}
+    - {x: 6, y: 5}
   animalMissions: []
   limitType: 2
   limitValue: 6

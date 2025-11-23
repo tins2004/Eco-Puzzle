@@ -52,6 +52,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -73,6 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -134,8 +137,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4556da82edc7e1c41bfdb452dfebbbdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originalLayer: 0
   originalPosition: {x: 0, y: 0, z: 0}
-  liftAmount: 0.2
+  lockIcon: {fileID: 3284085329384506433, guid: 5e65b130c0e77c5408aa24c2b760772f, type: 3}
 --- !u!114 &635465434795092668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +153,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tile: {fileID: 0}
-  holdTime: 0.3
 --- !u!60 &2985495114392928678
 PolygonCollider2D:
   m_ObjectHideFlags: 0
