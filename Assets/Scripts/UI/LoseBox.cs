@@ -21,9 +21,6 @@ public class LoseBox : MonoBehaviour
     [SerializeField] private Button retryButton;
     [SerializeField] private Button homeButton;
 
-    [Header("Gem Box")]
-    [SerializeField] private GemBox gemBox;
-
     private bool isFirstShow = true;
 
     void Awake()
@@ -66,14 +63,15 @@ public class LoseBox : MonoBehaviour
         {
             audioManager.PlaySFXButton();
             boxUI.HideBox();
-            gemBox.ShowGem(true, 0);
+            FindObjectOfType<LevelManager>().ChangeToHomeScene();
         });
 
         retryButton.onClick.AddListener(() =>
         {
             audioManager.PlaySFXButton();
             boxUI.HideBox();
-            gemBox.ShowGem(true, 1);
+
+            FindObjectOfType<LevelManager>().RetryLevel();
         });
     }
 

@@ -14,6 +14,8 @@ public abstract class BoosterBase : MonoBehaviour
     protected GridMapManager gridManager;
     protected LevelManager levelManager;
 
+    private GemBox gemBox;
+
     protected virtual void Start()
     {
         canClick = true;
@@ -41,9 +43,11 @@ public abstract class BoosterBase : MonoBehaviour
             }
             else
             {
-                gridManager.audioManager.PlaySFXFailClick();
-                gridManager.audioManager.VibrateClassic();
-                Debug.LogWarning("Hết bổ trợ rồi!");
+                // gridManager.audioManager.PlaySFXFailClick();
+                // gridManager.audioManager.VibrateClassic();
+                // Debug.LogWarning("Hết bổ trợ rồi!");
+                if (gemBox != null)
+                    gemBox.ShowBoxBuy(99, this);
             }
         });
         UpdateUI();
@@ -105,5 +109,16 @@ public abstract class BoosterBase : MonoBehaviour
 
         numberOfBooster.text = number <= 0 ? "+" : number.ToString();
         numberOfBooster.color = number <= 0 ? Color.gray : Color.black;
+    }
+
+    public void SetUpBuyBox(GemBox gemBox)
+    {
+        this.gemBox = gemBox;
+    }
+
+    public void AddBoosterNumber(int amount)
+    {
+        GameData.AddNumberOfBoosterByKey(boosterNumberKey, amount);
+        UpdateUI();
     }
 }

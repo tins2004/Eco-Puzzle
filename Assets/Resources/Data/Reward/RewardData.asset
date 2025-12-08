@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7729b56ccda4a7249acc4e9f5240034d, type: 3}
+  m_Name: RewardData
+  m_EditorClassIdentifier: Assembly-CSharp::RewardData
+  rewardItems:
+  - itemType: 1
+    itemIcon: {fileID: -4344993233425863550, guid: 52058e3c37d94ca42b9a754293849851, type: 3}
+    themeType: 0
+    chestType: 0
+    chestData: []
+  - itemType: 2
+    itemIcon: {fileID: -9064188187413496881, guid: 66b2874a37abc8b4a9b60ae8c586ed49, type: 3}
+    themeType: 1
+    chestType: 1
+    chestData:
+    - rewardType: 0
+      numberBetween: {x: 0, y: 0}
+  - itemType: 3
+    itemIcon: {fileID: -1121991789273611435, guid: c5ed3f51562f5314ebe578b4045ef62c, type: 3}
+    themeType: 0
+    chestType: 0
+    chestData: []
+  - itemType: 4
+    itemIcon: {fileID: 4515345014635656613, guid: 479ea63220cced84eba07f8eca1161af, type: 3}
+    themeType: 0
+    chestType: 0
+    chestData: []
+  - itemType: 5
+    itemIcon: {fileID: 21300000, guid: 21fbddde5f1e31d40bf4736ad287004a, type: 3}
+    themeType: 0
+    chestType: 0
+    chestData: []
+  - itemType: 5
+    itemIcon: {fileID: 21300000, guid: 3648f95446d891b4e85b185de19b5e51, type: 3}
+    themeType: 1
+    chestType: 0
+    chestData: []
+  - itemType: 6
+    itemIcon: {fileID: 6652610891747407723, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    themeType: 0
+    chestType: 0
+    chestData: []
+  - itemType: 6
+    itemIcon: {fileID: 7635997389503488795, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    themeType: 0
+    chestType: 1
+    chestData:
+    - rewardType: 2
+      numberBetween: {x: 0, y: 3}
+    - rewardType: 3
+      numberBetween: {x: 0, y: 3}
+    - rewardType: 4
+      numberBetween: {x: 0, y: 3}
+  - itemType: 6
+    itemIcon: {fileID: -4972130508362725353, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    themeType: 0
+    chestType: 2
+    chestData:
+    - rewardType: 1
+      numberBetween: {x: 4, y: 13}
+  - itemType: 6
+    itemIcon: {fileID: 2527867632029376968, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    themeType: 0
+    chestType: 3
+    chestData:
+    - rewardType: 1
+      numberBetween: {x: 13, y: 25}
+  - itemType: 6
+    itemIcon: {fileID: -4065907631462304403, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    themeType: 0
+    chestType: 4
+    chestData:
+    - rewardType: 6
+      numberBetween: {x: 25, y: 40}
+  - itemType: 6
+    itemIcon: {fileID: 7426878587700818622, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    themeType: 0
+    chestType: 5
+    chestData: []

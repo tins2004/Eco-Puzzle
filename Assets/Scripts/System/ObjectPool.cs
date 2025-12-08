@@ -8,6 +8,8 @@ public class ObjectPool : MonoBehaviour
 
     private List<GameObject> pool = new List<GameObject>();
 
+    private int size = 0;
+
     private void Awake()
     {
         for (int i = 0; i < initialSize; i++)
@@ -22,6 +24,8 @@ public class ObjectPool : MonoBehaviour
         obj.transform.localScale = Vector3.one;
         obj.SetActive(false);
         obj.transform.SetParent(this.transform);
+        obj.name += " " + size.ToString();
+        size++;
         pool.Add(obj);
         return obj;
     }

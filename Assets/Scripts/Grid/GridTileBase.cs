@@ -66,12 +66,16 @@ public abstract class GridTileBase : MonoBehaviour
         {
             animalManager = FindObjectOfType<AnimalManager>();
         }
+
+        DisplaySpriteTile();
     }
 
     /// <summary>
     /// Trả về tên loại tile (cần được override ở lớp con).
     /// </summary>
     public abstract TileType GetTileType();
+
+    protected abstract void DisplaySpriteTile();
 
     /// <summary>
     /// Xử lý sự kiện nhấn giữ trên tile (cần được override ở lớp con).

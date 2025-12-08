@@ -11,7 +11,9 @@ public class SceneTransition : MonoBehaviour
     [SerializeField] private Image effectTransition;
     [SerializeField] private Color effectColor;
     [SerializeField] private Image tileIcon;
-    [SerializeField] private Sprite[] tileSprites;
+    [SerializeField] private ThemeData themeData;
+    private Sprite[] tileSprites;
+
     private AudioManager audioManager;
 
     // private void Awake()
@@ -35,6 +37,7 @@ public class SceneTransition : MonoBehaviour
 
         audioManager.StopMusicBackground();
 
+
         if (useEffect)
         {
             StartCoroutine(OpenAndLoad(nextScene));
@@ -45,9 +48,23 @@ public class SceneTransition : MonoBehaviour
         }
     }
 
+    private void LoadSprite()
+    {
+        if (themeData == null)
+        {
+            Debug.LogError("Chưa gán Theme Data cho Transition");
+        }
+
+        ThemeSprite themeSprite = themeData.listTheme[GameData.GetIdTheme()];
+        tileSprites = new Sprite[] {themeSprite.T01, themeSprite.T03, themeSprite.T04, themeSprite.T05};
+    }
+
 
     private IEnumerator OpenAndLoad(string nextScene)
     {
+        if (tileSprites == null || tileSprites.Length == 0)
+            LoadSprite();
+
         tileIcon.gameObject.SetActive(true);
         tileIcon.transform.localScale = Vector3.zero;
         tileIcon.sprite = tileSprites[0];
@@ -90,6 +107,9 @@ public class SceneTransition : MonoBehaviour
 
     private IEnumerator OpenAndLoadShort(string nextScene)
     {
+        if (tileSprites == null || tileSprites.Length == 0)
+            LoadSprite();
+
         tileIcon.gameObject.SetActive(true);
         tileIcon.transform.localScale = Vector3.zero;
         tileIcon.sprite = tileSprites[tileSprites.Length -1];
@@ -124,6 +144,9 @@ public class SceneTransition : MonoBehaviour
     {
         if (audioManager == null)
             audioManager = AudioManager.Instance;
+        
+        if (tileSprites == null || tileSprites.Length == 0)
+            LoadSprite();
 
         tileIcon.gameObject.SetActive(true);
         tileIcon.transform.localScale = Vector3.one;

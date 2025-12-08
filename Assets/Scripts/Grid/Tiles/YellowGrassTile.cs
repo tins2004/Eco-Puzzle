@@ -4,6 +4,10 @@ public class YellowGrassTile : GridTileBase
 {
     public override TileType GetTileType() => TileType.T08_Yellow_Grass;
 
+    protected override void DisplaySpriteTile()
+    {
+        spriteRenderer.sprite = gridManager.themeData.listTheme[GameData.GetIdTheme()].T08;
+    }
 
     public override void UpgradeTile()
     {

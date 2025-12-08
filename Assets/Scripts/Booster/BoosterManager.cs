@@ -6,6 +6,16 @@ public class BoosterManager : MonoBehaviour
     [SerializeField] public BoosterUpgrade boosterUpgrade;
     [SerializeField] public BoosterRetry boosterRetry;
 
+    [Header("Gem Box")]
+    [SerializeField] public GemBox gemBox;
+
+    public void SetBoosters()
+    {
+        boosterSwapTile.SetUpBuyBox(gemBox);
+        boosterUpgrade.SetUpBuyBox(gemBox);
+        // boosterRetry.SetUpBuyBox(gemBox);
+    }
+
     void Update()
     {
         if (boosterSwapTile.IsReady())

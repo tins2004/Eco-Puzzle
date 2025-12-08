@@ -4,6 +4,10 @@ public class XavanTile : GridTileBase
 {
     public override TileType GetTileType() => TileType.T09_Xavan;
 
+    protected override void DisplaySpriteTile()
+    {
+        spriteRenderer.sprite = gridManager.themeData.listTheme[GameData.GetIdTheme()].T09;
+    }
 
     public override void UpgradeTile()
     {

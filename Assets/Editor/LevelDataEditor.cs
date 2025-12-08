@@ -122,9 +122,9 @@ public class LevelDataEditor : Editor
         EditorGUILayout.LabelField("Tile lock", EditorStyles.miniBoldLabel);
         for (int i = 0; i < level.tileLocks.Count; i++)
         {
-            level.tileLocks[i].SetPosition(EditorGUILayout.Vector2IntField("Tile Pos", level.tileLocks[i].position));
+            level.tileLocks[i].position = EditorGUILayout.Vector2IntField("Tile Pos", level.tileLocks[i].position);
             EditorGUILayout.BeginHorizontal();
-            level.tileLocks[i].SetRequiredCount(EditorGUILayout.IntField(level.tileLocks[i].requiredCount));
+            level.tileLocks[i].requiredCount = EditorGUILayout.IntField("Required Count", level.tileLocks[i].requiredCount);
             if (GUILayout.Button("X", GUILayout.Width(20))) level.tileLocks.RemoveAt(i);
             EditorGUILayout.EndHorizontal();
 

@@ -4,6 +4,10 @@ public class RockMountainTile : GridTileBase
 {
     public override TileType GetTileType() => TileType.T07_Rock_Mountain;
 
+    protected override void DisplaySpriteTile()
+    {
+        spriteRenderer.sprite = gridManager.themeData.listTheme[GameData.GetIdTheme()].T07;
+    }
 
     public override void UpgradeTile()
     {

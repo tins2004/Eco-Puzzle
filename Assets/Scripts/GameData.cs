@@ -1,11 +1,12 @@
 using System;
-using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public static class GameData
 {
+    private const string SceneKey = "Scene";
     private const string MaxLevelKey = "MaxLevel";
     private const string StarsKey = "Stars_"; // ví dụ: Stars_1, Stars_2...
 
@@ -18,11 +19,25 @@ public static class GameData
 
     private const string BoosterSwapKey = "BoosterSwap";
     private const string BoosterUpgradeKey = "BoosterUpgrade";
+    private const string BoosterLockerKey = "BoosterLocker";
 
     private const string ADSStatusKey = "ADSStatus";
 
     private const string LastTimeKey = "LastTimeStatus";
 
+    private const string VIPBattlePassKey = "VIPBattlePass";
+    private const string BattlePassDataKey = "BattlePassData";
+
+    private const string IDThemeKey = "IDTheme";
+    private const string OwnedThemeKey = "OwnedTheme";
+
+    // ----- Scene -----
+    public static string GetCurrentScene() => PlayerPrefs.GetString(SceneKey, "Begin Scene");
+    public static void SetCurrentScene(string sceneName)
+    {
+        PlayerPrefs.SetString(SceneKey, sceneName);
+    }
+    
     // ----- Level Progress -----
     public static int GetMaxLevel() => PlayerPrefs.GetInt(MaxLevelKey, 0);
 
@@ -57,7 +72,7 @@ public static class GameData
     public static void MinusGem(int value)
     {
         int currentGem = GetCurrentGem();
-        PlayerPrefs.SetInt(GemKey, (currentGem - value) < -9999 ? -9999 : (currentGem - value));
+        PlayerPrefs.SetInt(GemKey, (currentGem - value) < 0 ? 0 : (currentGem - value));
     }
 
     public static void AddGem(int value)
@@ -102,7 +117,7 @@ public static class GameData
     // ----- Booster -----
     public static string GetBoosterUpgradeKey() => BoosterUpgradeKey;
     public static int GetNumberOfBoosterUpgrade() => PlayerPrefs.GetInt(BoosterUpgradeKey, 0);
-    public static void SetNumberOfBoosterUpgrade(int value)
+    public static void AddNumberOfBoosterUpgrade(int value)
     {
         int currentValue = GetNumberOfBoosterUpgrade();
         PlayerPrefs.SetInt(BoosterUpgradeKey, (currentValue + value) > 99 ? 99 : currentValue + value);
@@ -110,10 +125,24 @@ public static class GameData
 
     public static string GetBoosterSwapKey() => BoosterSwapKey;
     public static int GetNumberOfBoosterSwap() => PlayerPrefs.GetInt(BoosterSwapKey, 0);
-    public static void SetNumberOfBoosterSwap(int value)
+    public static void AddNumberOfBoosterSwap(int value)
     {
         int currentValue = GetNumberOfBoosterSwap();
         PlayerPrefs.SetInt(BoosterSwapKey, (currentValue + value) > 99 ? 99 : currentValue + value);
+    }
+
+    public static string GetBoosterLockerKey() => BoosterLockerKey;
+    public static int GetNumberOfBoosterLocker() => PlayerPrefs.GetInt(BoosterLockerKey, 0);
+    public static void AddNumberOfBoosterLocker(int value)
+    {
+        int currentValue = GetNumberOfBoosterLocker();
+        PlayerPrefs.SetInt(BoosterLockerKey, (currentValue + value) > 99 ? 99 : currentValue + value);
+    }
+
+    public static void AddNumberOfBoosterByKey(string keyBooster, int value)
+    {
+        int currentValue = PlayerPrefs.GetInt(keyBooster, 0);
+        PlayerPrefs.SetInt(keyBooster, (currentValue + value) > 99 ? 99 : currentValue + value);
     }
 
     // ----- ADS -----
@@ -174,4 +203,70 @@ public static class GameData
         }
     }
 
+    // ----- Battle Pass -----
+    public static int GetVIPBattlePass() => PlayerPrefs.GetInt(VIPBattlePassKey, 0);
+    public static void SetVIPBattlePass(int value)
+    {
+        PlayerPrefs.SetInt(VIPBattlePassKey, value);
+    }
+
+    public static string GetBattlePassDataString() => PlayerPrefs.GetString(BattlePassDataKey, "");
+    public static string[] GetBattlePassDataArray()
+    {
+        string dataString = GetBattlePassDataString();
+        if (string.IsNullOrEmpty(dataString))
+        {
+            return new string[0];
+        }
+
+        return dataString.Split(';');
+    }
+    public static void AddBattlePassData(string newData)
+    {
+        string currentData = GetBattlePassDataString();
+        if (string.IsNullOrEmpty(currentData))
+        {
+            PlayerPrefs.SetString(BattlePassDataKey, newData);
+        }
+        else
+        {
+            PlayerPrefs.SetString(BattlePassDataKey, currentData + ";" + newData);
+        }
+    }
+
+    // ----- Theme -----
+    public static int GetIdTheme() => PlayerPrefs.GetInt(IDThemeKey, 0);
+    public static void SetIdTheme(int value)
+    {
+        PlayerPrefs.SetInt(IDThemeKey, value);
+    }
+
+    public static string GetOwnedThemeString() => PlayerPrefs.GetString(BattlePassDataKey, "");
+    public static int[] GetOwnedThemeArray()
+    {
+        string dataString = GetOwnedThemeString();
+        if (string.IsNullOrEmpty(dataString))
+        {
+            return new int[] { 0 };
+        }
+
+        // Convert string[] -> int[]
+        return dataString
+            .Split(';')
+            .Select(s => int.TryParse(s, out int val) ? val : 0)
+            .ToArray();
+    }
+
+    public static void AddOwnedTheme(int newData)
+    {
+        string currentData = GetOwnedThemeString();
+        if (string.IsNullOrEmpty(currentData))
+        {
+            PlayerPrefs.SetString(BattlePassDataKey, newData.ToString());
+        }
+        else
+        {
+            PlayerPrefs.SetString(BattlePassDataKey, currentData + ";" + newData.ToString());
+        }
+    }
 }

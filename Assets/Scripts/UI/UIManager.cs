@@ -70,9 +70,11 @@ public class UIManager : MonoBehaviour
         tutorialManager = manager;
     }
 
-    public void SetScoreData(LevelData levelData)
+    public void SetScoreData(LevelData levelData, ThemeData themeData)
     {
         audioManager = AudioManager.Instance;
+
+        SetUpSpriteTile(themeData);
 
         // this.levelData = levelData;
         maxScore = levelData.maxScore;
@@ -103,6 +105,38 @@ public class UIManager : MonoBehaviour
         if (limitValue <= 0) return false;
 
         return true;
+    }
+
+    private void SetUpSpriteTile(ThemeData themeData)
+    {
+        tiles.Clear();
+
+        ThemeSprite themeSprite = themeData.listTheme[GameData.GetIdTheme()];
+
+        // Lấy tất cả sprite theo thứ tự T01 → T09
+        Sprite[] sprites =
+        {
+            themeSprite.T01,
+            themeSprite.T02,
+            themeSprite.T03,
+            themeSprite.T04,
+            themeSprite.T05,
+            themeSprite.T06,
+            themeSprite.T07,
+            themeSprite.T08,
+            themeSprite.T09
+        };
+
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            TileDataSprite tile = new TileDataSprite
+            {
+                type = (TileType)(i + 1), // enum của bạn bắt đầu từ T01 = 1
+                icon = sprites[i]
+            };
+
+            tiles.Add(tile);
+        }
     }
 
     public void UpdateUI(Dictionary<TileType, int> tileMissionCounts, Dictionary<AnimalType, int> animalMissionCounts, int limitValue)
@@ -419,7 +453,7 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    private void UpdateGemUI()
+    public void UpdateGemUI()
     {
         if (gemText == null)
         {

@@ -15,6 +15,7 @@ public class GridMapManager : MonoBehaviour
     private LevelData mapData;
     private LevelManager levelManager;
     [HideInInspector] public AudioManager audioManager;
+    [SerializeField] public ThemeData themeData;
 
     [Header("Tile Prefabs")]
     [SerializeField] private GameObject[] tilePrefabs;

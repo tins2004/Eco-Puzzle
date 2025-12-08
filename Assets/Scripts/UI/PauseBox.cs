@@ -27,9 +27,6 @@ public class PauseBox : MonoBehaviour
     [SerializeField] private Sprite vibrationIconOn;
     [SerializeField] private Sprite vibrationIconOff;
 
-    [Header("Gem Box")]
-    [SerializeField] private GemBox gemBox;
-
     void Awake()
     {
         gameObject.SetActive(true);
@@ -81,8 +78,7 @@ public class PauseBox : MonoBehaviour
             audioManager.PlaySFXButton();
             boxUI.HideBox();
 
-            // FindObjectOfType<LevelManager>().ChangeToHomeScene();
-            gemBox.ShowGem(true, 0);
+            FindObjectOfType<LevelManager>().ChangeToHomeScene();
         });
     }
 

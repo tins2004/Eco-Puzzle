@@ -11,26 +11,12 @@ public class TileMission
     // Thêm danh sách các vị trí (x, y)
     public List<Vector2Int> positions = new List<Vector2Int>();
 }
+
 [Serializable]
 public class TileLock
 {
-    public Vector2Int position { get; private set; }
-    public int requiredCount { get; private set; }
-
-
-
-    public Vector2Int GetPositon() => position;
-    public int GetRequiredCount() => requiredCount;
-
-    public void SetPosition(Vector2Int pos)
-    {
-        position = pos;
-    }
-
-    public void SetRequiredCount(int count)
-    {
-        requiredCount = count;
-    }
+    public Vector2Int position;
+    public int requiredCount;
 }
 
 

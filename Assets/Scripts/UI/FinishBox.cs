@@ -37,7 +37,7 @@ public class FinishBox : MonoBehaviour
             boxUI.HideBox();
 
             // FindObjectOfType<LevelManager>().NextLevel();
-            gemBox.ShowGem(false, 2);
+            gemBox.ShowGem(false, sceneChangeIsHome: false);
         });
 
         homeButton.onClick.AddListener(() =>
@@ -47,7 +47,7 @@ public class FinishBox : MonoBehaviour
 
             // sceneTransition.OpenEffect("Home Scene");
             // FindObjectOfType<LevelManager>().ChangeToHomeScene();
-            gemBox.ShowGem(false, 0);
+            gemBox.ShowGem(false, sceneChangeIsHome: true);
         });
 
         for (int i = 0; i < starsParent.childCount; i++)

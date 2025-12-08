@@ -1,3 +1,4 @@
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class BeginManager : MonoBehaviour
@@ -6,6 +7,8 @@ public class BeginManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        GameData.SetCurrentScene("Begin Scene");
+        
         int maxLevel = GameData.GetMaxLevel();
         if (maxLevel == 0)
         {

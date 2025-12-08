@@ -12,10 +12,10 @@ public class HomeManager : MonoBehaviour
     [SerializeField] private Transform levelMapView;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button shopButton;
-    [SerializeField] private Button informationButton;
+    [SerializeField] private Button battlePassButton;
     [SerializeField] private Button event7DaysButton;
-    [SerializeField] private Button commentButton;
-    [SerializeField] private TMP_Text gemText;
+    [SerializeField] private Button themeButton;
+    [SerializeField] private TMP_Text[] gemText;
 
     [Header("Settings")]
     [SerializeField] private Transform settingsParent;
@@ -36,20 +36,23 @@ public class HomeManager : MonoBehaviour
     [SerializeField] private Transform event7DaysView;
     [SerializeField] private Button closeEvent7DaysButton;
 
-    [Header("Daily Reward")]
-    [SerializeField] private Transform dailyRewardParent;
-    [SerializeField] private Transform dailyRewardView;
-    [SerializeField] private Button dailyRewardButton;
-    [SerializeField] private Button closeDailyRewardButton;
+    [Header("Battle Pass")]
+    [SerializeField] private Transform battlePassParent;
+    [SerializeField] private Transform battlePassView;
+    [SerializeField] private Transform vipBattlePassButton;
+    [SerializeField] private Button closeBattlePassButton;
 
+    [Header("Theme")]
+    [SerializeField] private Transform themeParent;
+    [SerializeField] private Transform themeView;
+    [SerializeField] private Button closeThemeButton;
 
-    [Header("Comment")]
-    [SerializeField] private string commentURL = "https://github.com/";
 
     [Header("Manager Link")]
     [HideInInspector] public LanguageManager languageManager;
     [HideInInspector] public AudioManager audioManager;
     private SettingManager settingManager;
+    private ThemeManager themeManager;
 
     private string timeTest;
 
@@ -62,6 +65,9 @@ public class HomeManager : MonoBehaviour
     {
         levelMapParent.gameObject.SetActive(false);
         settingsParent.gameObject.SetActive(false);
+        event7DaysParent.gameObject.SetActive(false);
+        battlePassParent.gameObject.SetActive(false);
+        themeParent.gameObject.SetActive(false);
 
         sceneTransition.CloseEffect();
 
@@ -71,7 +77,7 @@ public class HomeManager : MonoBehaviour
         settingManager = GetComponent<SettingManager>();
         settingManager.SetupSettingStatus();
 
-        OpenLevelMap(1.2f);
+        StartHomeScene();
         audioManager.PlayMusicBackground();
 
         // ----- Button listeners -----
@@ -114,30 +120,44 @@ public class HomeManager : MonoBehaviour
         {
             audioManager.PlaySFXButton();
             CloseEvent7Days(0f);
-            OpenLevelMap(0.7f);
+            if (GameData.GetCurrentScene() == "Begin Scene")
+            {
+                GameData.SetCurrentScene("Home Scene");
+                OpenBattlePass(0.7f);
+            }
+            else
+                OpenLevelMap(0.7f);
         });
 
         // --- Daily Reward ---
-        dailyRewardButton.onClick.AddListener(() =>
+        battlePassButton.onClick.AddListener(() =>
         {
             audioManager.PlaySFXButton();
             CloseLevelMap(0f);
-            OpenDailyReward(0.7f);
+            OpenBattlePass(0.7f);
         });
 
-        closeDailyRewardButton.onClick.AddListener(() =>
+        closeBattlePassButton.onClick.AddListener(() =>
         {
             audioManager.PlaySFXButton();
-            CloseDailyReward(0f);
+            CloseBattlePass(0f);
             OpenLevelMap(0.7f);
         });
 
 
-        // --- Comment ---
-        commentButton.onClick.AddListener(() =>
+        // --- Theme ---
+        themeButton.onClick.AddListener(() =>
         {
             audioManager.PlaySFXButton();
-            // Application.OpenURL(commentURL);
+            CloseLevelMap(0f);
+            OpenTheme(0.7f);
+        });
+
+        closeThemeButton.onClick.AddListener(() =>
+        {
+            audioManager.PlaySFXButton();
+            CloseTheme(0f);
+            OpenLevelMap(0.7f);
         });
     }
 
@@ -149,15 +169,18 @@ public class HomeManager : MonoBehaviour
     // ----- Level map animations -----
     private void OpenLevelMap(float waitTime)
     {
-        gemText.text = GameData.GetCurrentGem().ToString() + "\n"  + FireBaseAnalytics.Instance.IsFirebaseReady()  + "\n" + timeTest;
+        foreach (var text in gemText)
+        {
+            text.text = GameData.GetCurrentGem().ToString() + "\n"  + FireBaseAnalytics.Instance.IsFirebaseReady()  + "\n" + timeTest;
+        }
         
 
         levelMapParent.gameObject.SetActive(true);
 
         levelMapView.localScale = Vector3.zero;
-        informationButton.transform.localScale = Vector3.zero;
+        battlePassButton.transform.localScale = Vector3.zero;
         event7DaysButton.transform.localScale = Vector3.zero;
-        commentButton.transform.localScale = Vector3.zero;
+        themeButton.transform.localScale = Vector3.zero;
         settingsButton.transform.localScale = Vector3.zero;
         shopButton.transform.localScale = Vector3.zero;
 
@@ -165,10 +188,10 @@ public class HomeManager : MonoBehaviour
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(waitTime);
 
-        seq.Append(informationButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.Append(battlePassButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
-        seq.Append(commentButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
+        seq.Append(themeButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
         seq.Join(settingsButton.transform.DOScale(1, 0.2f).SetEase(Ease.OutBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
@@ -192,11 +215,11 @@ public class HomeManager : MonoBehaviour
 
         seq.Append(event7DaysButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.Join(settingsButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
-        seq.Join(commentButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.Join(themeButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.Join(shopButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
-        seq.Append(informationButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.Append(battlePassButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
         seq.JoinCallback(() => audioManager.PlaySFXPop());
 
         seq.AppendCallback(() =>
@@ -326,7 +349,9 @@ public class HomeManager : MonoBehaviour
         seq.PrependInterval(waitTime);
 
         seq.Append(closeEvent7DaysButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
         seq.Append(event7DaysView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
         seq.Play();
     }
 
@@ -336,7 +361,9 @@ public class HomeManager : MonoBehaviour
         seq.PrependInterval(waitTime);
 
         seq.Append(event7DaysView.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
         seq.Append(closeEvent7DaysButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
 
         seq.AppendCallback(() =>
         {
@@ -346,36 +373,106 @@ public class HomeManager : MonoBehaviour
         seq.Play();
     }
 
-    // ----- Daily Reward animations -----
-    private void OpenDailyReward(float waitTime)
+    // ----- Battle Pass animations -----
+    private void OpenBattlePass(float waitTime)
     {
-        dailyRewardParent.gameObject.SetActive(true);
-        dailyRewardView.localScale = Vector3.zero;
-        closeDailyRewardButton.transform.localScale = Vector3.zero;
+        battlePassParent.gameObject.SetActive(true);
+        battlePassView.localScale = Vector3.zero;
+        closeBattlePassButton.transform.localScale = Vector3.zero;
+        vipBattlePassButton.transform.localScale = Vector3.zero;
 
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(waitTime);
 
-        seq.Append(closeDailyRewardButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
-        seq.Append(dailyRewardView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.Append(closeBattlePassButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
+        if (GameData.GetVIPBattlePass() == 0)
+        {
+            seq.Append(vipBattlePassButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+            seq.JoinCallback(() => audioManager.PlaySFXPop());
+        }
+        seq.Append(battlePassView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
 
         seq.Play();
     }
 
-    private void CloseDailyReward(float waitTime)
+    private void CloseBattlePass(float waitTime)
     {
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(waitTime);
 
-        seq.Append(dailyRewardView.DOScale(0, 0.2f).SetEase(Ease.InBack));
-        seq.Append(closeDailyRewardButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.Append(battlePassView.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
+        if (GameData.GetVIPBattlePass() == 0)
+        {
+            seq.Append(vipBattlePassButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+            seq.JoinCallback(() => audioManager.PlaySFXPop());
+        }
+        seq.Append(closeBattlePassButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
 
         seq.AppendCallback(() =>
         {
-            dailyRewardParent.gameObject.SetActive(false);
+            battlePassParent.gameObject.SetActive(false);
         });
 
         seq.Play();
     }
 
+
+    // ----- Theme animations -----
+    private void OpenTheme(float waitTime)
+    {
+        themeParent.gameObject.SetActive(true);
+        themeView.localScale = Vector3.zero;
+        closeThemeButton.transform.localScale = Vector3.zero;
+
+        if (themeManager == null)
+            themeManager = GetComponent<ThemeManager>();
+
+        themeManager.DisplayTheme();
+
+        Sequence seq = DOTween.Sequence();
+        seq.PrependInterval(waitTime);
+
+        seq.Append(closeThemeButton.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
+        seq.Append(themeView.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
+        seq.Play();
+    }
+
+    private void CloseTheme(float waitTime)
+    {
+        Sequence seq = DOTween.Sequence();
+        seq.PrependInterval(waitTime);
+
+        seq.Append(themeView.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
+        seq.Append(closeThemeButton.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
+        seq.JoinCallback(() => audioManager.PlaySFXPop());
+
+        seq.AppendCallback(() =>
+        {
+            themeParent.gameObject.SetActive(false);
+        });
+
+        seq.Play();
+    }
+
+    private void StartHomeScene()
+    {
+        if (GameData.GetCurrentScene() == "Begin Scene")
+        {
+            OpenEvent7Days(0.7f);
+        }
+        else
+        {
+            OpenLevelMap(0.7f);
+            GameData.SetCurrentScene("Home Scene");
+        }
+
+    }
 }
+

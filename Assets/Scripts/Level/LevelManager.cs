@@ -8,6 +8,7 @@ public class LevelManager : MonoBehaviour
     [HideInInspector] public AudioManager audioManager;
 
     [Header("Level Settings")]
+    [SerializeField] private ThemeData themeData;
     [SerializeField] private int currentLevelIndex = 1; // bắt đầu từ Level 1
     [SerializeField] private TMP_Text logWarning;
     private LevelData levelData;
@@ -80,7 +81,8 @@ public class LevelManager : MonoBehaviour
         // booster Manager
         if (boosterManager != null)
         {
-            uiManager.SetScoreData(levelData);
+            boosterManager.SetBoosters();
+            uiManager.SetScoreData(levelData, themeData);
             if (tutorialManager != null) uiManager.SetTutorialManager(tutorialManager);
         }
         
@@ -109,7 +111,6 @@ public class LevelManager : MonoBehaviour
 
     public void NextLevel()
     {
-        Debug.Log("qua màn tiếp theo");
         Sequence seq = DOTween.Sequence();
         seq.AppendInterval(0.5f);
         seq.Append(gridMapManager.transform.DOScale(0, 0.2f).SetEase(Ease.InBack));
@@ -120,26 +121,18 @@ public class LevelManager : MonoBehaviour
             currentLevelIndex++;
             PlayerPrefs.SetInt("CurrentLevel", currentLevelIndex);
 
-            sceneTransition.OpenEffect(SceneManager.GetActiveScene().name);
+            sceneTransition.OpenEffect(SceneManager.GetActiveScene().name, false);
         });
     }
 
     public void RetryLevel()
     {
-        Debug.Log("đã chơi lại");
-        // Không tăng level, chỉ load lại data của level hiện tại
         PlayerPrefs.SetInt("CurrentLevel", currentLevelIndex);
 
         // Load lại scene ngay lập tức, không tween
         sceneTransition.OpenEffect(SceneManager.GetActiveScene().name, false);
     }
 
-
-    public void RestartLevelTest()
-    {
-        PlayerPrefs.SetInt("CurrentLevel", 1); // lưu level
-        sceneTransition.OpenEffect(SceneManager.GetActiveScene().name);
-    }
 
     public void ChangeToHomeScene()
     {
