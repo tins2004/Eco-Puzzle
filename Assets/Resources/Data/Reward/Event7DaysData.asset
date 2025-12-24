@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9d5ba5e9129c46439a933da4e51efbf, type: 3}
+  m_Name: Event7DaysData
+  m_EditorClassIdentifier: Assembly-CSharp::Event7DaysData
+  rewardItems:
+  - dayNumber: 1
+    rewardType: 1
+    quantity: 20
+    chestType: 0
+    themeType: 0
+  - dayNumber: 2
+    rewardType: 2
+    quantity: 5
+    chestType: 0
+    themeType: 0
+  - dayNumber: 3
+    rewardType: 6
+    quantity: 1
+    chestType: 2
+    themeType: 0
+  - dayNumber: 4
+    rewardType: 1
+    quantity: 20
+    chestType: 0
+    themeType: 0
+  - dayNumber: 5
+    rewardType: 6
+    quantity: 0
+    chestType: 1
+    themeType: 0
+  - dayNumber: 6
+    rewardType: 6
+    quantity: 0
+    chestType: 3
+    themeType: 0
+  - dayNumber: 7
+    rewardType: 6
+    quantity: 0
+    chestType: 0
+    themeType: 0

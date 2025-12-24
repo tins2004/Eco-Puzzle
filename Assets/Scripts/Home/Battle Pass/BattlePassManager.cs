@@ -18,9 +18,7 @@ public class BattlePassManager : MonoBehaviour
     [SerializeField] private Button vipBattlePassButton;
     [SerializeField] private Transform homeTarget; // Nơi hiển thị hiệu ứng nhận phần thưởng
 
-    [Header("Chest UI")]
-    [SerializeField] private Transform rewardBackground;
-    [SerializeField] private ObjectPool itemRewardPool;
+    [SerializeField] private Sprite[] statusSprite = new Sprite[2];    
 
     private int currentIndex = 0;
 
@@ -145,7 +143,7 @@ public class BattlePassManager : MonoBehaviour
                     break;
             }
 
-            // GameData.AddBattlePassData(!isVip ? "F" + index : "V" + index);
+            GameData.AddBattlePassData(!isVip ? "F" + index : "V" + index);
             UpdateUI(currentIndex);
         });
     }
@@ -207,10 +205,11 @@ public class BattlePassManager : MonoBehaviour
     {
         List<ChestData> chests = rewardData.GetChestDataByType(chestType);
     
-        foreach (ChestData chestData in chests)
-        {
-            Debug.Log(chestType + " Chest Data: " + chestData.rewardType + " - " + chestData.numberBetween.x + " to " + chestData.numberBetween.y);
-        }
+        FindObjectOfType<HomeManager>().ShowItemReward(chests, chestType, rewardData);
+        // foreach (ChestData chestData in chests)
+        // {
+        //     Debug.Log(chestType + " Chest Data: " + chestData.rewardType + " - " + chestData.numberBetween.x + " to " + chestData.numberBetween.y);
+        // }
         // rewardBackground.localScale = Vector3.zero;
 
 
@@ -274,33 +273,51 @@ public class BattlePassManager : MonoBehaviour
         targetGemText.color = canGive ? Color.green : Color.red;
 
         // Free Item
-        Image iconImage = items[isBotBox ? 0 : 2].transform.Find("Image").GetComponent<Image>();
+        Image[] iconImage = items[isBotBox ? 0 : 2].transform.Find("Image").GetComponentsInChildren<Image>(true);
         // iconImage.sprite = battlePassData.steps[index].iconFree;
-        iconImage.sprite = rewardData.GetIconByRewardType(battlePassData.steps[index].freeRewardType, battlePassData.steps[index].themeTypeFree, battlePassData.steps[index].chestTypeFree);
+        iconImage[0].sprite = rewardData.GetIconByRewardType(battlePassData.steps[index].freeRewardType, battlePassData.steps[index].themeTypeFree, battlePassData.steps[index].chestTypeFree);
         TMP_Text quantityText = items[isBotBox ? 0 : 2].transform.Find("Text").GetComponent<TMP_Text>();
         quantityText.text = battlePassData.steps[index].quantityFree.ToString();
 
         Button freeButton = items[isBotBox ? 0 : 2].GetComponent<Button>();
         freeButton.onClick.RemoveAllListeners();
-        freeButton.GetComponent<Image>().color = canGive ? receivedFree ? Color.yellow : Color.white : Color.red;
+        // freeButton.GetComponent<Image>().color = canGive ? receivedFree ? Color.yellow : Color.white : Color.red;
+        if (canGive)
+        {
+            iconImage[1].gameObject.SetActive(false);   
+        }
+        else
+        {
+            iconImage[1].gameObject.SetActive(true);
+            iconImage[1].sprite = receivedFree ? statusSprite[1] : statusSprite[0];
+        }
 
         int quantity = canGive && !receivedFree ? battlePassData.steps[index].quantityFree : 0;
-        SetPickUpItemButton(freeButton, false, index, iconImage, battlePassData.steps[index].freeRewardType, quantity, battlePassData.steps[index].themeTypeFree, battlePassData.steps[index].chestTypeFree);
+        SetPickUpItemButton(freeButton, false, index, iconImage[0], battlePassData.steps[index].freeRewardType, quantity, battlePassData.steps[index].themeTypeFree, battlePassData.steps[index].chestTypeFree);
 
 
         // VIP Item
-        iconImage = items[isBotBox ? 1 : 3].transform.Find("Image").GetComponent<Image>();
+        iconImage = items[isBotBox ? 1 : 3].transform.Find("Image").GetComponentsInChildren<Image>(true);
         // iconImage.sprite = battlePassData.steps[index].iconVip;
-        iconImage.sprite = rewardData.GetIconByRewardType(battlePassData.steps[index].vipRewardType, battlePassData.steps[index].themeTypeVip, battlePassData.steps[index].chestTypeVip);
+        iconImage[0].sprite = rewardData.GetIconByRewardType(battlePassData.steps[index].vipRewardType, battlePassData.steps[index].themeTypeVip, battlePassData.steps[index].chestTypeVip);
         quantityText = items[isBotBox ? 1 : 3].transform.Find("Text").GetComponent<TMP_Text>();
         quantityText.text = battlePassData.steps[index].quantityVip.ToString();
 
         Button vipButton = items[isBotBox ? 1 : 3].GetComponent<Button>();
         vipButton.onClick.RemoveAllListeners();
-        vipButton.GetComponent<Image>().color = (canGive && GameData.GetVIPBattlePass() == 1) ? receivedVIP ? Color.yellow : Color.white : Color.red;
+        // vipButton.GetComponent<Image>().color = (canGive && GameData.GetVIPBattlePass() == 1) ? receivedVIP ? Color.yellow : Color.white : Color.red;
+        if (canGive && GameData.GetVIPBattlePass() == 1)
+        {
+            iconImage[1].gameObject.SetActive(false);   
+        }
+        else
+        {
+            iconImage[1].gameObject.SetActive(true);
+            iconImage[1].sprite = receivedVIP ? statusSprite[1] : statusSprite[0];
+        }
 
         quantity = canGive && GameData.GetVIPBattlePass() == 1 && !receivedVIP ? battlePassData.steps[index].quantityVip : 0;
-        SetPickUpItemButton(vipButton, true, index, iconImage, battlePassData.steps[index].vipRewardType, quantity, battlePassData.steps[index].themeTypeVip, battlePassData.steps[index].chestTypeVip);
+        SetPickUpItemButton(vipButton, true, index, iconImage[0], battlePassData.steps[index].vipRewardType, quantity, battlePassData.steps[index].themeTypeVip, battlePassData.steps[index].chestTypeVip);
 
 
     }

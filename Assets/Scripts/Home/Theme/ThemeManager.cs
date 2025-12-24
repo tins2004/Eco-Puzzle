@@ -57,14 +57,16 @@ public class ThemeManager : MonoBehaviour
 
             foreach (int ownedIdTheme in GameData.GetOwnedThemeArray())
             {
-                if (i != ownedIdTheme)
+                if (i != ownedIdTheme && i != GameData.GetIdTheme())
                 {
+                    Debug.Log("Locked Theme: " + i);
                     itemImage[1].sprite = lockIcon;
                     continue;
                 }
-
+                
                 if (i == GameData.GetIdTheme())
                 {
+                    Debug.Log("Chose Theme: " + i);
                     itemImage[1].sprite = choseIcon;
                     continue;
                 }

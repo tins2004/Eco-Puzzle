@@ -23,10 +23,10 @@ MonoBehaviour:
     chestTypeVip: 1
     themeTypeVip: 0
   - targetGem: 0
-    freeRewardType: 6
+    freeRewardType: 5
     quantityFree: 1
     chestTypeFree: 2
-    themeTypeFree: 0
+    themeTypeFree: 1
     vipRewardType: 6
     quantityVip: 1
     chestTypeVip: 3

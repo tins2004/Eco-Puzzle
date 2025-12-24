@@ -261,7 +261,9 @@ MonoBehaviour:
   tileMissions:
   - tileType: 4
     requiredCount: 2
+    positions: []
   animalMissions: []
+  tileLocks: []
   limitType: 2
   limitValue: 6
   maxScore: 210

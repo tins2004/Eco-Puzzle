@@ -26,20 +26,10 @@ MonoBehaviour:
   - themeType: 1
     T01: {fileID: 21300000, guid: ea232d5d6b6a62941aa751bbc334aab1, type: 3}
     T02: {fileID: 21300000, guid: f3dda0f3e959c324ba9a6d40554074b8, type: 3}
-    T03: {fileID: 21300000, guid: e67d75a490819434d9766547b5c9c9ca, type: 3}
+    T03: {fileID: 21300000, guid: b0f11140d68de884fb328e949444d4ab, type: 3}
     T04: {fileID: 21300000, guid: 14f349ce6d90b1c4cad084917c877dd4, type: 3}
-    T05: {fileID: 21300000, guid: 3648f95446d891b4e85b185de19b5e51, type: 3}
+    T05: {fileID: 21300000, guid: 37d6fe8969757564c944103ab583de71, type: 3}
     T06: {fileID: 21300000, guid: e1a8f8272060da24388c31ae7a1d5ff0, type: 3}
     T07: {fileID: 21300000, guid: 919c3f58150fa8d46af78af5d2dfe9b0, type: 3}
     T08: {fileID: 21300000, guid: 203ef006b7097964db6d2c13b83d0784, type: 3}
     T09: {fileID: 21300000, guid: 52f62f6539bf28e46b71e8311de89015, type: 3}
-  - themeType: 2
-    T01: {fileID: 0}
-    T02: {fileID: 0}
-    T03: {fileID: 0}
-    T04: {fileID: 0}
-    T05: {fileID: 21300000, guid: ea232d5d6b6a62941aa751bbc334aab1, type: 3}
-    T06: {fileID: 0}
-    T07: {fileID: 0}
-    T08: {fileID: 0}
-    T09: {fileID: 0}

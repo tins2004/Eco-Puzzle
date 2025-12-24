@@ -31,6 +31,9 @@ public static class GameData
     private const string IDThemeKey = "IDTheme";
     private const string OwnedThemeKey = "OwnedTheme";
 
+    private const string Events7DaysKey = "Events7Days";
+    private const string LastDatePickUpKey = "LastDatePickUp";
+
     // ----- Scene -----
     public static string GetCurrentScene() => PlayerPrefs.GetString(SceneKey, "Begin Scene");
     public static void SetCurrentScene(string sceneName)
@@ -203,6 +206,20 @@ public static class GameData
         }
     }
 
+    public static bool IsConsecutiveDay(string lastTimeString, string currentTimeString)
+    {
+        if (string.IsNullOrEmpty(lastTimeString) || string.IsNullOrEmpty(currentTimeString))
+            return false;
+
+        DateTime lastTime = DateTime.Parse(lastTimeString);
+        DateTime currentTime = DateTime.Parse(currentTimeString);
+
+        DateTime lastDate = lastTime.Date;
+        DateTime currentDate = currentTime.Date;
+
+        return (currentDate - lastDate).Days == 1;
+    }
+
     // ----- Battle Pass -----
     public static int GetVIPBattlePass() => PlayerPrefs.GetInt(VIPBattlePassKey, 0);
     public static void SetVIPBattlePass(int value)
@@ -259,7 +276,11 @@ public static class GameData
 
     public static void AddOwnedTheme(int newData)
     {
+        if (HasOwnedTheme(newData))
+            return;
+
         string currentData = GetOwnedThemeString();
+
         if (string.IsNullOrEmpty(currentData))
         {
             PlayerPrefs.SetString(BattlePassDataKey, newData.ToString());
@@ -268,5 +289,82 @@ public static class GameData
         {
             PlayerPrefs.SetString(BattlePassDataKey, currentData + ";" + newData.ToString());
         }
+    }
+
+    public static bool HasOwnedTheme(int themeId)
+    {
+        int[] ownedThemes = GetOwnedThemeArray();
+
+        for (int i = 0; i < ownedThemes.Length; i++)
+        {
+            if (ownedThemes[i] == themeId)
+                return true;
+        }
+
+        return false;
+    }
+
+    // ----- Events 7 Days -----
+    public static string GetEvent7DaysDataString() => PlayerPrefs.GetString(Events7DaysKey, "");
+    public static int[] GetEvent7DaysDataArray()
+    {
+        string dataString = GetEvent7DaysDataString();
+        if (string.IsNullOrEmpty(dataString))
+        {
+            return new int[0];
+        }
+
+        string[] parts = dataString.Split(';');
+        int[] result = new int[parts.Length];
+
+        for (int i = 0; i < parts.Length; i++)
+        {
+            int.TryParse(parts[i], out result[i]);
+        }
+
+        return result;
+    }
+
+    public static void AddEvent7DaysData(int newData)
+    {
+        string currentData = GetEvent7DaysDataString();
+        if (string.IsNullOrEmpty(currentData))
+        {
+            PlayerPrefs.SetString(Events7DaysKey, newData.ToString());
+        }
+        else
+        {
+            PlayerPrefs.SetString(Events7DaysKey, currentData + ";" + newData.ToString());
+        }
+    }
+    
+    public static void ResetEvent7DaysData()
+    {
+        PlayerPrefs.DeleteKey(Events7DaysKey);
+    }
+
+    public static string GetLastDatePickUp()
+    {
+        return PlayerPrefs.GetString(LastDatePickUpKey, "");
+    }
+    public static void SetLastDatePickUp(string dateString)
+    {
+        PlayerPrefs.SetString(LastDatePickUpKey, dateString);
+    }
+
+    public static int GetNumberOfWaitingDays(string currentTimeString)
+    {
+        string lastTimeString = GetLastDatePickUp();
+
+        if (string.IsNullOrEmpty(lastTimeString) || string.IsNullOrEmpty(currentTimeString))
+            return 0;
+
+        DateTime lastTime = DateTime.Parse(lastTimeString);
+        DateTime currentTime = DateTime.Parse(currentTimeString);
+
+        DateTime lastDate = lastTime.Date;
+        DateTime currentDate = currentTime.Date;
+
+        return (currentDate - lastDate).Days;
     }
 }

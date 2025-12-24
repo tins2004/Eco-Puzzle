@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -47,6 +49,12 @@ public class HomeManager : MonoBehaviour
     [SerializeField] private Transform themeView;
     [SerializeField] private Button closeThemeButton;
 
+    [Header("Chest UI")]
+    [SerializeField] private Transform rewardBackground;
+    [SerializeField] private ObjectPool itemRewardPool;
+    [SerializeField] private TMP_Text countdownText;
+    private float countdownTime = 3f;
+    private float currentTime;
 
     [Header("Manager Link")]
     [HideInInspector] public LanguageManager languageManager;
@@ -54,7 +62,7 @@ public class HomeManager : MonoBehaviour
     private SettingManager settingManager;
     private ThemeManager themeManager;
 
-    private string timeTest;
+    [HideInInspector] public string currentDate;
 
     private void Awake() {
         audioManager = AudioManager.Instance;
@@ -68,10 +76,12 @@ public class HomeManager : MonoBehaviour
         event7DaysParent.gameObject.SetActive(false);
         battlePassParent.gameObject.SetActive(false);
         themeParent.gameObject.SetActive(false);
+        rewardBackground.gameObject.SetActive(false);
+
 
         sceneTransition.CloseEffect();
 
-        timeTest = await GameData.GetInternetTime();
+        currentDate = await GameData.GetInternetTime();
 
         // ----- Setup And Open ------
         settingManager = GetComponent<SettingManager>();
@@ -171,7 +181,8 @@ public class HomeManager : MonoBehaviour
     {
         foreach (var text in gemText)
         {
-            text.text = GameData.GetCurrentGem().ToString() + "\n"  + FireBaseAnalytics.Instance.IsFirebaseReady()  + "\n" + timeTest;
+            // text.text = GameData.GetCurrentGem().ToString() + "\n"  + FireBaseAnalytics.Instance.IsFirebaseReady()  + "\n" + currentDate;
+            text.text = "[" + GameData.GetCurrentGem().ToString() + "]";
         }
         
 
@@ -473,6 +484,77 @@ public class HomeManager : MonoBehaviour
             GameData.SetCurrentScene("Home Scene");
         }
 
+    }
+
+    // ----- Chest reward UI -----
+    public void ShowItemReward(List<ChestData> items, ChestType chestType, RewardData rewardData)
+    {
+        rewardBackground.gameObject.SetActive(true);
+        rewardBackground.GetComponent<CanvasGroup>().alpha = 0;
+
+        currentTime = countdownTime;
+        countdownText.text = $"[{Mathf.Ceil(currentTime)}]";
+
+        Sequence seq = DOTween.Sequence();
+        seq.PrependInterval(0.2f);
+
+        seq.Append(rewardBackground.GetComponent<CanvasGroup>().DOFade(1, 0.4f).SetEase(Ease.OutBack));
+        // seq.JoinCallback(() => audioManager.PlaySFXOpenBox());
+
+        foreach (var item in items)
+        {
+            Debug.Log(chestType + " Chest Data: " + item.rewardType + " - " + item.numberBetween.x + " to " + item.numberBetween.y);
+            
+            int value = Random.Range(item.numberBetween.x, item.numberBetween.y);
+            if (value <= 0)
+                continue;
+
+            GameObject itemRewardObj = itemRewardPool.GetObject();
+            itemRewardObj.GetComponentInChildren<Image>().sprite = rewardData.GetRewardIconByType(item.rewardType, chestType);
+            itemRewardObj.GetComponentInChildren<TMP_Text>().text = "x" + value.ToString();
+            // itemRewardObj.GetComponentInChildren<TMP_Text>().transform.localScale = Vector3.zero;
+            itemRewardObj.transform.localScale = Vector3.zero;
+
+            seq.Append(itemRewardObj.transform.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+            seq.JoinCallback(() => audioManager.PlaySFXPop());
+        }
+
+        seq.AppendCallback(() => StartCoroutine(CountdownRoutine()));
+        
+
+        seq.Play();
+    }
+    private IEnumerator CountdownRoutine()
+    {
+        while (currentTime > 0)
+        {
+            countdownText.text = $"[{Mathf.Ceil(currentTime)}]";
+            audioManager.PlaySFXAddStar();
+            yield return new WaitForSeconds(1f);
+            currentTime -= 1f;
+        }
+
+        countdownText.text = " ";
+
+        // Ẩn text hoặc gọi sự kiện sau khi đếm xong
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(itemRewardPool.transform.DOPunchScale(Vector3.one * 0.5f, 0.3f, 8, 1));
+        // seq.JoinCallback(() => audioManager.PlaySFXGemReceive());
+        seq.JoinCallback(() => audioManager.PlaySFXAddStar());
+
+        seq.AppendInterval(0.5f);
+
+        seq.Append(rewardBackground.GetComponent<CanvasGroup>().DOFade(0, 0.4f).SetEase(Ease.OutBack));
+
+        seq.AppendCallback(() => {
+            rewardBackground.gameObject.SetActive(false);
+            itemRewardPool.ReturnAllObjects();
+        });
+        
+
+        seq.Play();
     }
 }
 

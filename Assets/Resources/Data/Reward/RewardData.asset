@@ -46,12 +46,12 @@ MonoBehaviour:
     chestType: 0
     chestData: []
   - itemType: 6
-    itemIcon: {fileID: 6652610891747407723, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    itemIcon: {fileID: 3522553991245362413, guid: 30e594cc5ff2c1b448b2ecae4e01ce7f, type: 3}
     themeType: 0
     chestType: 0
     chestData: []
   - itemType: 6
-    itemIcon: {fileID: 7635997389503488795, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    itemIcon: {fileID: -2795454375848562820, guid: 8e7864b42ec0e5c42b6fc96765f0a3b0, type: 3}
     themeType: 0
     chestType: 1
     chestData:
@@ -62,28 +62,28 @@ MonoBehaviour:
     - rewardType: 4
       numberBetween: {x: 0, y: 3}
   - itemType: 6
-    itemIcon: {fileID: -4972130508362725353, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    itemIcon: {fileID: -4702938675796189686, guid: e13552e44ac6aea4189424653171166a, type: 3}
     themeType: 0
     chestType: 2
     chestData:
     - rewardType: 1
       numberBetween: {x: 4, y: 13}
   - itemType: 6
-    itemIcon: {fileID: 2527867632029376968, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    itemIcon: {fileID: 3414797646362109928, guid: c9f5b8e34dd117942acf4488ee8b69a9, type: 3}
     themeType: 0
     chestType: 3
     chestData:
     - rewardType: 1
       numberBetween: {x: 13, y: 25}
   - itemType: 6
-    itemIcon: {fileID: -4065907631462304403, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    itemIcon: {fileID: 2561551031411121969, guid: 01120cf7e090db74b92c9a28c2a97f7e, type: 3}
     themeType: 0
     chestType: 4
     chestData:
     - rewardType: 6
       numberBetween: {x: 25, y: 40}
   - itemType: 6
-    itemIcon: {fileID: 7426878587700818622, guid: 4dd54f63f2f652644bcf000f84efbfa2, type: 3}
+    itemIcon: {fileID: -4344797515840791051, guid: 9f5cd0d9056b68948939c63855564069, type: 3}
     themeType: 0
     chestType: 5
     chestData: []

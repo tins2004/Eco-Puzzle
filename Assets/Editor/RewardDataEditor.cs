@@ -1,12 +1,9 @@
 using UnityEditor;
 using UnityEngine;
-using System.Linq;
-using System.Collections.Generic;
 
 [CustomEditor(typeof(RewardData))]
 public class RewardDataEditor : Editor
 {
-
     public override void OnInspectorGUI()
     {
         RewardData reward = (RewardData)target;

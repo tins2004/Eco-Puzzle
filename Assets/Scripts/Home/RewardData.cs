@@ -120,4 +120,17 @@ public class RewardData : ScriptableObject
         }
         return null;
     }
+
+    public Sprite GetRewardIconByType(RewardType rewardType, ChestType chestType)
+    {
+        foreach (RewardItem item in rewardItems)
+        {
+            if (item.itemType == rewardType && rewardType != RewardType.R06_CHEST)
+                return item.itemIcon; 
+
+            else if (item.itemType == RewardType.R06_CHEST && item.chestType == chestType)
+                return item.itemIcon;
+        }
+        return null;
+    }
 }
