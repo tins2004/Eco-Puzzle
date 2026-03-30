@@ -3,7 +3,7 @@
 
 ### Liên kết dự án
 * Chơi thử: [Download APK](https://tins24.itch.io/eco-flow)
-* Video Demo: [Youtobe](https://www.youtube.com/shorts/BD2eSSKDNOU)
+* Video Demo: [Youtube](https://www.youtube.com/shorts/BD2eSSKDNOU)
 
 ## Gameplay Overview
 #### Core Loop
