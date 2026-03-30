@@ -28,7 +28,7 @@ Assets/
 ├── Scripts/
 │   ├── Core/             # Grid Manager, Turn System
 │   ├── Grid/             
-│       ├── Grid/         # BaseTile & Derived Classes (Forest, Water, etc.)
+│       ├── Tile/         # BaseTile & Derived Classes (Forest, Water, etc.)
 │   ├── Animal/           # Animal Data & Logic
 │   ├── Booster/          # Item logic
 │   ├── System/           # Object Pool, SceneTransition, etc.
